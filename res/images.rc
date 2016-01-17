@@ -1,0 +1,12 @@
+BACKGROUND    RCDATA   "background/0000.png"
+BACKGROUND01  RCDATA   "background/0001.png"
+BACKGROUND02  RCDATA   "background/0002.png"
+BACKGROUND03  RCDATA   "background/0003.png"
+BACKGROUND04  RCDATA   "background/0004.png"
+BACK          RCDATA   "actions/back0064.png"
+MENU          RCDATA   "actions/menu0064.png"
+CART          RCDATA   "actions/cart0064.png"
+USER          RCDATA   "actions/user0064.png"
+
+
+

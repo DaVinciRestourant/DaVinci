@@ -1,0 +1,36 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{EE625C26-C210-4B29-AFB7-BEEA32203E70}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="DaVinci.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="DaVinci">
+        <MSBuild Projects="DaVinci.dproj"/>
+    </Target>
+    <Target Name="DaVinci:Clean">
+        <MSBuild Projects="DaVinci.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DaVinci:Make">
+        <MSBuild Projects="DaVinci.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="DaVinci"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="DaVinci:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="DaVinci:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

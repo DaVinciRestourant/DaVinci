@@ -1,1 +1,7 @@
 dcu
+/src/*.local
+/src/*.identcache
+build
+/src/data/*.log
+*.log
+*.res
