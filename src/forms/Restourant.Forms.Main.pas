@@ -5,100 +5,201 @@ uses
  ,System.Classes, System.Variants, System.Actions, System.ImageList
  ,FMX.Types, FMX.Graphics, FMX.Objects, FMX.Controls, FMX.Controls.Presentation
  ,FMX.StdCtrls, FMX.Forms, FMX.Dialogs, FMX.TabControl, FMX.Gestures
- ,FMX.ListBox, FMX.Layouts
+ ,FMX.ListBox, FMX.Layouts, FMX.Edit, FMX.DateTimeCtrls
+ ,Restourant.Consts.Strings
  ,Restourant.JsonDataObject, Restourant.JsonDatabase
  ;
 type
   TFormMain = class(TForm)
   private
+    {$REGION 'Main components'}
     FDB             :TJsonDataBase;
     FUDB            :TJsonDataBase;
     FTimerUpdate    :FMX.Types.TTimer;
-
+    FTimerOrder     :FMX.Types.TTimer;
     FGestMan        :TGestureManager;
-    FTopBar         :TRectangle;
-    FTopBtnBack     :TRectangle;
-    FTopBtnBackImg  :TImage;
-    FTopBtnMenu     :TRectangle;
-    FTopBtnMenuImg  :TImage;
-    FTopBtnOrder    :TRectangle;
-    FTopBtnOrderImg :TImage;
-    FTopBtnUser     :TRectangle;
-    FTopBtnUserImg  :TImage;
-
-    FTopBarLabel    :TLabel;
-    FtcMain         :TTabControl;
-    FtiMainMenu     :TTabItem;
-    FtiMainOrder    :TTabItem;
-    FtiMainUser     :TTabItem;
-    FtcMenu         :TTabControl;
-    FtiMenuCat      :TTabItem;
-    FtiMenuGroup    :TTabItem;
-    FtiMenuList     :TTabItem;
-    FtiMenuTMC      :TTabItem;
-    FtcTMC          :TTabControl;
-    FtiTMCH         :TTabItem;
-    FtiTMCV         :TTabItem;
-    FlbxCategory    :TListBox;
-    FlbxGroup       :TListBox;
-    FlbxTMC         :TListBox;
-
-    FVbgrTMC        :TRectangle;
-    FVimgTMC_IMAGE  :TImage;
-    FVlblTMC_NAME   :TLabel;
-    FVlblTMC_COMENT :TLabel;
-    FVlblTMC_PRICE  :TLabel;
-    FVlblTMC_EDIZM  :TLabel;
-    FHbgrTMC        :TRectangle;
-    FHimgTMC_IMAGE  :TImage;
-    FHltClient      :TLayout;
-    FHlblTMC_NAME   :TLabel;
-    FHlblTMC_COMENT :TLabel;
-    FHlblTMC_PRICE  :TLabel;
-    FHlblTMC_EDIZM  :TLabel;
-    procedure   actBackExecute(Sender :TObject);
-    procedure   actMenuExecute(Sender :TObject);
-    procedure   actOrderExecute(Sender :TObject);
-    procedure   actUserExecute(Sender :TObject);
-    procedure   DoChangeTabControl(Sender :TObject);
-    procedure   DoClick_Category(Sender: TObject);
-    procedure   DoClick_Group(Sender: TObject);
-    procedure   DoClick_TMC(Sender: TObject);
-    procedure   DoListItemMouseDown (Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
-    procedure   DoListItemMouseUp   (Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
-    procedure   DoTopButtonMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
-    procedure   DoTopButtonMouseUp  (Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+    {$ENDREGION 'Main components'}
+    {$REGION 'Controls declaration and placement'}
+    FTopBar                     :TRectangle;
+      FTopBtnBack               :TRectangle;
+        FTopBtnBackImg          :TImage;
+      FTopBtnMenu               :TRectangle;
+        FTopBtnMenuImg          :TImage;
+      FTopBtnOrder              :TRectangle;
+        FTopBtnOrderImg         :TImage;
+      FTopBtnUser               :TRectangle;
+        FTopBtnUserImg          :TImage;
+      FTopBtnLang               :array[Restourant.Consts.Strings.TLang] of TRectangle;
+    FtcMain                     :TTabControl;
+      FtiMainMenu               :TTabItem;
+        FtcMenu                 :TTabControl;
+          FtiMenuCat            :TTabItem;
+            FlbxCategory        :TListBox;
+            LlblRestourantName  :TLabel;
+            LlblRestouarntAddr  :TLabel;
+          FtiMenuGroup          :TTabItem;
+            FlbxGroup           :TListBox;
+          FtiMenuList           :TTabItem;
+            FlbxList            :TListBox;
+          FtiMenuTMC            :TTabItem;
+            FtcTMC              :TTabControl;
+              FtiTMCH           :TTabItem;
+                FVbgrTMC        :TRectangle;
+                FVimgTMC        :TImage;
+                FVlblTMC_NAME   :TLabel;
+                FVlblTMC_COMENT :TLabel;
+                FVlblTMC_PRICE  :TLabel;
+                FVlblTMC_EDIZM  :TLabel;
+                FVbtnPlus       :TRectangle;
+                FVlblQuant      :TLabel;
+                FVbtnMinus      :TRectangle;
+              FtiTMCV           :TTabItem;
+                FHbgrTMC        :TRectangle;
+                FHimgTMC        :TImage;
+                FHlblTMC_NAME   :TLabel;
+                FHlblTMC_COMENT :TLabel;
+                FHlblTMC_PRICE  :TLabel;
+                FHlblTMC_EDIZM  :TLabel;
+                FHbtnPlus       :TRectangle;
+                FHlblQuant      :TLabel;
+                FHbtnMinus      :TRectangle;
+      FtiMainOrder              :TTabItem;
+        FtcOrder                :TTabControl;
+          FtiOrdersList         :TTabItem;
+            FlbxOrdersList      :TListBox;
+            FbtnOrdersClear     :TButton;
+          FtiOrder              :TTabItem;
+            FbgrOrder           :TImage;
+              FlblOrderNo       :TLabel;
+              FedtOrderDate     :FMX.DateTimeCtrls.TDateEdit;
+              FlblOrderHdrImg   :TLabel;
+              FlblOrderHdrTmc   :TLabel;
+              FlblOrderHdrPrice :TLabel;
+              FlblOrderHdrQuant :TLabel;
+              FlblOrderHdrTotal :TLabel;
+              FlbxOrder         :TListBox;
+              FlblOrderFtrTmc   :TLabel;
+              FlblOrderFtrTotal :TLabel;
+              FlblOrderName     :TLabel;
+              FedtOrderName     :TEdit;
+              FbtnOrderSend     :TButton;
+      FtiMainUser               :TTabItem;
+        FsbUser                 :FMX.Layouts.TScrollBox;
+          FbgrUser              :TImage;
+            FlblUsrID           :TLabel;
+            FlblUsrFIRSTNAME    :TLabel;
+            FlblUsrLASTNAME     :TLabel;
+            FlblUsrPHONE        :TLabel;
+            FlblUsrPWD          :TLabel;
+            FlblUsrPWD2         :TLabel;
+            FedtUsrID           :TEdit;
+            FedtUsrFIRSTNAME    :TEdit;
+            FedtUsrLASTNAME     :TEdit;
+            FedtUsrPHONE        :TEdit;
+            FedtUsrPWD          :TEdit;
+            FedtUsrPWD2         :TEdit;
+            FbtnUsrRegister     :TButton;
+    {$ENDREGION 'Controls declaration and placement'}
+    procedure   actBackExecute     (Sender :TObject);
+    procedure   actMenuExecute     (Sender :TObject);
+    procedure   actOrderExecute    (Sender :TObject);
+    procedure   actUserExecute     (Sender :TObject);
+    procedure   DoChangeTabControl (Sender :TObject);
+    procedure   DoClickLang        (Sender: TObject);
+    procedure   DoClickCategory    (Sender: TObject);
+    procedure   DoClickGroup       (Sender: TObject);
+    procedure   DoClickList        (Sender: TObject);
+    procedure   DoClickOrder       (Sender: TObject);
+    procedure   DoClickTmcPlus     (Sender: TObject);
+    procedure   DoClickTmcMinus    (Sender: TObject);
+    procedure   DoClickUserRegister(Sender: TObject);
+    procedure   DoClickOrderSend   (Sender: TObject);
+    procedure   DoClickOrdersClear (Sender: TObject);
+    procedure   DoChangeOrderName  (Sender :TObject);
+    procedure   DoMouseDownListItem(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+    procedure   DoMouseUpListItem  (Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+    procedure   DoMouseDownTopBtn  (Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+    procedure   DoMouseUpTopBtn    (Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+    procedure   DoMouseDownBtn     (Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+    procedure   DoMouseUpBtn       (Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+    procedure   DoLangChange;
+    procedure   DoOnTimerUpdate    (Sender :TObject);
+    procedure   DoOnTimerOrder     (Sender :TObject);
+    {$REGION 'Visual style methods'}
+    function    ColorMaterial(const ColorIndex:Integer):Integer;
+    function    ColorButtonTopBar(const Value:Boolean):TColor;
+    function    ColorButtonOrder(const Value:Boolean):TColor;
+    procedure   ImageLoadFromResource(Bitmap :TBitmap; const BackgroundResource:string);
+    function    ImageFileNameTMC(const TMC_ID:Integer):string;
+    {$ENDREGION 'Visual style methods'}
+    {$REGION 'Archives and rosources'}
+    function    ExtractFileArchive(const ArchiveName, DestinationPath:string):Boolean;
+    function    ExtractFileFromResource(const Resource, ToFileName: string): Boolean;
+    {$ENDREGION 'Archives and rosources'}
+    {$REGION 'Create controls methods'}
+    procedure   CreateControlsTopBar;
+    procedure   CreateControlsOrd   (aParentObj :TFMXObject);
+    procedure   CreateControlsUser  (aParentObj :TFMXObject);
     procedure   CreateControlsTMCHor(aParentObj :TFMXObject);
     procedure   CreateControlsTMCVer(aParentObj :TFMXObject);
     function    CreateListbox(aParentObj :TFMXObject; const BackgroundResource:string):TListBox;
+    function    CreateListBoxItem(aListBox: TListBox; const aItemHeight, aItemWidth :Single;
+                  const aTag, aColorIndex:Integer; aOnClick, aOnDblClick:TNotifyEvent; var aBackground :TRectangle):TListBoxItem;
     function    CreateTopButton(const AnAlign:FMX.Types.TAlignLayout;
-                  const ResourceName:string; AnOnClick:TNotifyEvent; var AnImage:FMX.Objects.TImage):FMX.Objects.TRectangle;
-    procedure   DoOnTimerUpdate(Sender :TObject);
+                  const ResourceName:string; AnOnClick:TNotifyEvent; var AnImage:FMX.Objects.TImage):TRectangle;
+    function    CreateRectButton(Parent:TControl; const aWidth:Integer; const AnAlign:FMX.Types.TAlignLayout; const Caption, ResourceName:string; AnOnClick:TNotifyEvent): FMX.Objects.TRectangle;
+    function    CreateRectButtonTmc(Parent:TControl; const TMC_ID:Integer; AnOnClick:TNotifyEvent): FMX.Objects.TRectangle;
+    {$ENDREGION 'Create controls methods'}
+  public
+    procedure   Resize;                                                                 override;
+    procedure   KeyUp(var Key: Word; var KeyChar: System.WideChar; Shift: TShiftState); override;
+  public
+    FLang       :Restourant.Consts.Strings.TLang;
+    FFlagOrder  :Boolean;
+    FOrderCurr  :TJsonObject;
+    function    DataBaseFilePath(const FileName:string):string;
+    procedure   DataBaseCreate;
+    procedure   DataBaseFree;
+    function    DataBaseConstInteger(const ConstName:string):Integer;
+    function    DataBaseConstString(const ConstName:string):string;
+    function    DataBaseTMCObject(const TMC_ID:Integer):TJsonObject;
+    function    DataBaseTmcCtgrIdByGroup(const TMC_GROUP_ID:Integer):string;
+    procedure   UserBaseCreate;
+    procedure   UserBaseFree;
+    function    UserBaseFilePath(const FileName:string):string;
+    function    UserBaseOrderNew:TJsonObject;
+    function    UserBaseOrderLast:TJsonObject;
+    function    UserBaseOrderLastID:Integer;
+    function    UserBaseOrderName(const ID :Integer):string;
+    function    UserBaseOrderById(const ID :Integer):TJsonObject;
+    procedure   UserBaseOrderPlus  (const TMC_ID:Integer);
+    procedure   UserBaseOrderMinus (const TMC_ID:Integer);
+    function    UserBaseOrderQntGet(const TMC_ID:Integer):Double;
+    procedure   UserBaseOrderQntSet(const TMC_ID:Integer; const Value:Double);
+    procedure   UserBaseOrderCalcSum;
+    procedure   UserBaseUserLoad;
+    function    UserDataUserSave:Boolean;
+    {$REGION 'Internet'}
+    function    HTTPGetString(const Host, URL:string):string;
+    function    HTTPGetFile(const Host, URL, FileName:string):Boolean;
+    function    HTTPPost(const Host, URL: string; const ParamNames, ParamValues:array of string): string;
+    function    HTTPPostJSON(const Host, URL, PostJSON:string):string;
+    {$ENDREGION}
   public
     constructor CreateNew(AOwner: TComponent; Dummy: NativeInt = 0); override;
     constructor Create(AOwner: TComponent); override;
     destructor  Destroy; override;
-    procedure   Resize; override;
-    procedure   KeyUp(var Key: Word; var KeyChar: System.WideChar; Shift: TShiftState); override;
     function    CanBack:Boolean;
     procedure   DoBack;
-    function    CheckFolders:Boolean;
-    function    MaterialColor(const anIndex:Integer):Integer;
-    function    GetTopBarButtonColor(const Value:Boolean):TColor;
-    function    SafeFloat(const Value:string):Extended;
-    function    GetTMCImage(const TMC_ID:Integer):string;
-    function    GetConstInteger(const ConstName:string):Integer;
-    function    GetTMCObject(const TMC_ID:Integer):TJsonObject;
-    function    DataFilePath(const FileName:string):string;
-    function    UserDataPath(const FileName:string):string;
-    function    HTTPGetString(const Host, URL:string):string;
-    function    HTTPGetFile(const Host, URL, FileName:string):Boolean;
-    function    ExtractFileArchive(const ArchiveName, DestinationPath:string):Boolean;
-    function    ExtractFileFromResource(const Resource, ToFileName: string): Boolean;
-    procedure   FillCategories;
+    function    FolderMyDocuments:string;
+    function    FoldersCheck:Boolean;
+    procedure   FillCat;
     procedure   FillGroups(const TMC_CTGR_ID:Integer);
-    procedure   FillTMC(const TMC_GROUP_ID:Integer);
-    procedure   FillCard(const TMC_ID, aColor:Integer);
+    procedure   FillList(const TMC_GROUP_ID:Integer);
+    procedure   FillCard(const TMC_ID:Integer; const aColor:TColor);
+    procedure   FillUser;
+    procedure   FillOrders;
+    procedure   FillOrder(anOrder:TJsonObject);
   end;
 
 var
@@ -108,96 +209,59 @@ implementation
 
 uses
   Restourant.Consts.Filenames, Restourant.Consts.Database, Restourant.Consts.UserData
- ,Restourant.Consts.Strings, Restourant.Consts.Colors
- ,System.Zip
+ ,Restourant.Consts.Colors
+ ,System.Zip, System.Math
+ ,FMX.Helpers.Controls
  ,Network
  ,IdHTTP, IdComponent
  ;
 
-function TFormMain.MaterialColor(const anIndex: Integer): Integer;
+function SafeFloat(const Value: string; DefaultValue :Extended = 0): Extended;
+var
+  LTempStr :string;
+begin
+  Result   := DefaultValue;
+  LTempStr := Value;
+  try
+    LTempStr := LTempStr.Replace('.', System.SysUtils.FormatSettings.DecimalSeparator);
+    LTempStr := LTempStr.Replace(',', System.SysUtils.FormatSettings.DecimalSeparator);
+    Result   := LTempStr.ToExtended();
+  except
+    Result := DefaultValue;
+  end;
+end;
+
+function TFormMain.ColorMaterial(const ColorIndex: Integer): Integer;
 var
   LIndex :Integer;
 begin
-  LIndex := anIndex;
+  LIndex := ColorIndex;
   if(LIndex >= Length(Restourant.Consts.Colors.Material))then
-    LIndex := anIndex mod Length(Restourant.Consts.Colors.Material);
+    LIndex := ColorIndex mod Length(Restourant.Consts.Colors.Material);
   Result := Restourant.Consts.Colors.Material[LIndex];
 end;
 
-function TFormMain.GetTopBarButtonColor(const Value: Boolean): TColor;
+function TFormMain.ColorButtonOrder(const Value: Boolean): TColor;
 begin
-  if Value then Result := $FF000000 else Result := FTopBar.Fill.Color;
+  if Value then
+    Result := $FFFF0000
+  else
+    Result := FTopBar.Fill.Color;
 end;
 
-function TFormMain.SafeFloat(const Value: string): Extended;
-var
-  LStr :string;
+function TFormMain.ColorButtonTopBar(const Value: Boolean): TColor;
 begin
-  Result := 0;
-  LStr := Value;
-  try
-    LStr := LStr.Replace('.', System.SysUtils.FormatSettings.DecimalSeparator);
-    LStr := LStr.Replace(',', System.SysUtils.FormatSettings.DecimalSeparator);
-    Result := LStr.ToExtended();
-  except
-    Result := 0;
-  end;
+  if Value then
+    Result := $FF000000
+  else
+    Result := FTopBar.Fill.Color;
 end;
 
-function TFormMain.ExtractFileArchive(const ArchiveName, DestinationPath: string): Boolean;
-begin
-  Result := False;
-  with TZipFile.Create do
-  try
-    ExtractZipFile(ArchiveName, DestinationPath );
-  finally
-    Free;
-  end;
-  Result := True;
-end;
-
-function TFormMain.ExtractFileFromResource(const Resource, ToFileName: string): Boolean;
-begin
-  Result := False;
-  with TResourceStream.Create(hInstance, Resource, RT_RCDATA ) do
-  try
-    SaveToFile( ToFileName );
-  finally
-    Free;
-  end;
-  Result := True;
-end;
-
-function TFormMain.DataFilePath(const FileName: string): string;
-begin
-  Result := System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetSharedDocumentsPath, Restourant.Consts.Database.Folder);
-  Result := System.IOUtils.TPath.Combine(Result, FileName) + Restourant.Consts.Database.FileExt;
-end;
-
-function TFormMain.UserDataPath(const FileName: string): string;
-begin
-  Result := System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetSharedDocumentsPath, Restourant.Consts.UserData.Folder);
-  Result := System.IOUtils.TPath.Combine(Result, FileName) + Restourant.Consts.UserData.FileExt;
-end;
-
-function TFormMain.GetConstInteger(const ConstName: string): Integer;
-var
-  i :Integer;
-begin
-  Result := 0;
-  for i:=0 to FDB[Restourant.Consts.Database.C].A[Restourant.Consts.Database.Section].Count-1 do
-    if(FDB[Restourant.Consts.Database.C].A[Restourant.Consts.Database.Section].O[i].S['ID'] = ConstName )then
-    begin
-      Result := FDB[Restourant.Consts.Database.C].A[Restourant.Consts.Database.Section].O[i].S['FINT'].ToInteger();
-      Break;
-    end;
-end;
-
-function TFormMain.GetTMCImage(const TMC_ID: Integer): string;
+function TFormMain.ImageFileNameTMC(const TMC_ID: Integer): string;
 var
   LFolder:string;
 begin
-  LFolder := System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetSharedDocumentsPath, Restourant.Consts.Filenames.FolderImages);
+  LFolder := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.Filenames.FolderImages);
   LFolder := System.IOUtils.TPath.Combine(LFolder, Restourant.Consts.Filenames.FolderImagesTMC);
   if(TMC_ID = 0)then
     Result := System.IOUtils.TPath.Combine(LFolder, Restourant.Consts.Filenames.FileNameImageTMCNoImage)
@@ -209,19 +273,368 @@ begin
   end;
 end;
 
-function TFormMain.GetTMCObject(const TMC_ID: Integer): TJsonObject;
+function TFormMain.ExtractFileArchive(const ArchiveName, DestinationPath: string): Boolean;
+begin
+  Result := True;
+  try
+    TZipFile.ExtractZipFile( ArchiveName, DestinationPath );
+  except
+    Result := False;
+  end;
+end;
+
+function TFormMain.ExtractFileFromResource(const Resource, ToFileName: string): Boolean;
+begin
+  Result := False;
+  with TResourceStream.Create( hInstance, Resource, RT_RCDATA ) do
+  try
+    SaveToFile( ToFileName );
+  finally
+    Free;
+  end;
+  Result := True;
+end;
+
+procedure TFormMain.DataBaseCreate;
+begin
+  if(FDB <> nil)then
+    DataBaseFree;
+  FDB := TJsonDataBase.Create(Self);
+  with FDB do
+  begin
+    DataBasePath := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.Database.Folder);
+    FileExt      := Restourant.Consts.Database.FileExt;
+    AddTable( Restourant.Consts.Database.C );
+    AddTable( Restourant.Consts.Database.R_TMC_CTGR );
+    AddTable( Restourant.Consts.Database.R_TMC_GROUPSHARE );
+    AddTable( Restourant.Consts.Database.R_TMC );
+  end;
+end;
+
+procedure TFormMain.DataBaseFree;
+begin
+  if(FDB <> nil)then
+    FreeAndNil(FDB);
+end;
+
+function TFormMain.DataBaseFilePath(const FileName: string): string;
+begin
+  Result := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.Database.Folder);
+  Result := System.IOUtils.TPath.Combine(Result, FileName + Restourant.Consts.Database.FileExt);
+end;
+
+function TFormMain.DataBaseConstInteger(const ConstName: string): Integer;
 var
-  i :Integer;
+  LCounter :Integer;
+begin
+  Result := 0;
+  with FDB.Tables[Restourant.Consts.Database.C] do
+    for LCounter:=0 to A[Restourant.Consts.Database.Section].Count-1 do
+      if(A[Restourant.Consts.Database.Section].O[LCounter].S[Restourant.Consts.Database.FieldConstID] = ConstName )then
+      begin
+        Result := A[Restourant.Consts.Database.Section].O[LCounter].S[Restourant.Consts.Database.FieldConstFINT].ToInteger();
+        Break;
+      end;
+end;
+
+function TFormMain.DataBaseConstString(const ConstName: string): string;
+var
+  LCounter :Integer;
+begin
+  Result := System.SysUtils.EmptyStr;
+  with FDB.Tables[Restourant.Consts.Database.C] do
+    for LCounter:=0 to A[Restourant.Consts.Database.Section].Count-1 do
+      if(A[Restourant.Consts.Database.Section].O[LCounter].S[Restourant.Consts.Database.FieldConstID] = ConstName )then
+      begin
+        Result := A[Restourant.Consts.Database.Section].O[LCounter].S[Restourant.Consts.Database.FieldConstFSTR];
+        Break;
+      end;
+end;
+
+
+function TFormMain.DataBaseTMCObject(const TMC_ID: Integer): TJsonObject;
+var
+  LCounter :Integer;
 begin
   Result := nil;
-  for i:=0 to FDB[Restourant.Consts.Database.R_TMC].A[Restourant.Consts.Database.Section].Count-1 do
-    if(FDB[Restourant.Consts.Database.R_TMC].A[Restourant.Consts.Database.Section].O[i].S['ID'] = TMC_ID.ToString())then
+  with FDB.Tables[Restourant.Consts.Database.R_TMC] do
+    for LCounter:=0 to A[Restourant.Consts.Database.Section].Count-1 do
+      if(A[Restourant.Consts.Database.Section].O[LCounter].S['ID'] = TMC_ID.ToString())then
+      begin
+        Result := A[Restourant.Consts.Database.Section].O[LCounter];
+        Break;
+      end;
+end;
+
+function TFormMain.DataBaseTmcCtgrIdByGroup(const TMC_GROUP_ID:Integer):string;
+var
+  LCounter  :Integer;
+  LCategory :string;
+begin
+  Result := '1';
+  LCategory := System.SysUtils.EmptyStr;
+  with FDB[Restourant.Consts.Database.R_TMC_GROUPSHARE].A[Restourant.Consts.Database.Section] do
+    for LCounter:=0 to Count-1 do
+      if(O[LCounter].S['TMC_GROUP_ID'] = TMC_GROUP_ID.ToString() )then
+      begin
+        LCategory := O[LCounter].S['GROUPNAME'];
+        Break;
+      end;
+  if(LCategory = System.SysUtils.EmptyStr)then exit;
+  with FDB[Restourant.Consts.Database.R_TMC_CTGR].A[Restourant.Consts.Database.Section] do
+    for LCounter:=0 to Count-1 do
+      if(O[LCounter].S['NAME'] = LCategory)then
+      begin
+        Result := O[LCounter].S['ID'];
+        Break;
+      end;
+end;
+
+procedure TFormMain.UserBaseCreate;
+begin
+  if(FUDB <> nil)then
+    UserBaseFree;
+  FUDB := TJsonDataBase.Create(Self);
+  with FUDB do
+  begin
+    DataBasePath := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.UserData.Folder);
+    FileExt      := Restourant.Consts.UserData.FileExt;
+    if not TFile.Exists( System.IOUtils.TPath.Combine(DataBasePath, Restourant.Consts.UserData.PROFILE + Restourant.Consts.UserData.FileExt) ) then
     begin
-      Result := FDB[Restourant.Consts.Database.R_TMC].A[Restourant.Consts.Database.Section].O[i];
-      Break;
+      NewTable( Restourant.Consts.UserData.PROFILE );
+      Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserID]        := System.SysUtils.EmptyStr;
+      Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserEMAIL]     := System.SysUtils.EmptyStr;
+      Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserFIRSTNAME] := System.SysUtils.EmptyStr;
+      Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserLASTNAME]  := System.SysUtils.EmptyStr;
+      Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserPHONE]     := Network.PhoneNumberLine1;
+      Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserPWD]       := System.SysUtils.EmptyStr;
+      Flush(Restourant.Consts.UserData.PROFILE);
+    end
+    else
+    begin
+      AddTable( Restourant.Consts.UserData.PROFILE );
+      if(Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserLang] = System.SysUtils.EmptyStr)then
+        Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserLang] := TLangToInt(Low(Restourant.Consts.Strings.TLang)).ToString;
+      FLang := IntToTLang( Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserLang].ToInteger );
+    end;
+
+    if not TFile.Exists( System.IOUtils.TPath.Combine(DataBasePath, Restourant.Consts.UserData.ORDERS + Restourant.Consts.UserData.FileExt) ) then
+    begin
+      NewTable( Restourant.Consts.UserData.ORDERS );
+    end
+    else
+      AddTable( Restourant.Consts.UserData.ORDERS );
+  end;
+end;
+
+procedure TFormMain.UserBaseFree;
+begin
+  if(FUDB <> nil)then
+  begin
+    FUDB.Clear(True);
+    FreeAndNil(FUDB);
+  end;
+end;
+
+function TFormMain.UserBaseFilePath(const FileName: string): string;
+begin
+  Result := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.UserData.Folder);
+  Result := System.IOUtils.TPath.Combine(Result, FileName + Restourant.Consts.UserData.FileExt);
+end;
+
+function TFormMain.UserBaseOrderLastID:Integer;
+var
+  LObj     :TJsonObject;
+  LCounter :Integer;
+begin
+  Result := 0;
+  for LCounter:=0 to FUDB.Tables[Restourant.Consts.UserData.ORDERS].Count-1 do
+  begin
+    LObj := FUDB.Tables[Restourant.Consts.UserData.ORDERS].Items[LCounter]^.ObjectValue;
+    Result := System.Math.Max(Result, LObj.I[Restourant.Consts.UserData.FieldOrderID] );
+  end;
+end;
+
+procedure TFormMain.UserBaseOrderPlus(const TMC_ID: Integer);
+begin
+  UserBaseOrderQntSet(TMC_ID, UserBaseOrderQntGet(TMC_ID) + 1);
+end;
+
+procedure TFormMain.UserBaseOrderMinus(const TMC_ID: Integer);
+begin
+  UserBaseOrderQntSet(TMC_ID, UserBaseOrderQntGet(TMC_ID) - 1);
+end;
+
+function TFormMain.UserBaseOrderQntGet(const TMC_ID: Integer): Double;
+var
+  LCounter :Integer;
+begin
+  Result := 0;
+  with FOrderCurr.A[Restourant.Consts.UserData.FieldOrder_DOCUMENT] do
+    for LCounter := 0 to Count-1 do
+      if(O[LCounter].I[Restourant.Consts.UserData.FieldDocTMC_ID] = TMC_ID)then
+      begin
+        Result := O[LCounter].F[Restourant.Consts.UserData.FieldDocQUANT];
+        Break;
+      end;
+end;
+
+procedure TFormMain.UserBaseOrderQntSet(const TMC_ID: Integer; const Value: Double);
+var
+  LCounter :Integer;
+  LTmcItem :TJsonObject;
+  LDocItem :TJsonObject;
+begin
+  LDocItem := nil;
+  with FOrderCurr.A[Restourant.Consts.UserData.FieldOrder_DOCUMENT] do
+    for LCounter := 0 to Count-1 do
+      if(O[LCounter].I[Restourant.Consts.UserData.FieldDocTMC_ID] = TMC_ID)then
+      begin
+        if(Value <= 0)then
+        begin
+          FOrderCurr.A[Restourant.Consts.UserData.FieldOrder_DOCUMENT].Delete(LCounter);
+          UserBaseOrderCalcSum;
+          Exit;
+        end
+        else
+        begin
+          LDocItem := O[LCounter];
+          Break;
+        end;
+      end;
+  if( (LDocItem = nil) and (Value <= 0) )then exit;
+  LTmcItem := DataBaseTMCObject(TMC_ID);
+  if(LDocItem = nil)then
+  begin
+    LDocItem := FOrderCurr.A[Restourant.Consts.UserData.FieldOrder_DOCUMENT].AddObject;
+    LDocItem.S[Restourant.Consts.UserData.FieldDocNAME       ] := System.SysUtils.EmptyStr;
+    LDocItem.I[Restourant.Consts.UserData.FieldDocTMC_ID     ] := TMC_ID;
+  end;
+  LDocItem.S[Restourant.Consts.UserData.FieldDocTMC_NAME   ] := LTmcItem.S['NAME'];
+  LDocItem.S[Restourant.Consts.UserData.FieldDocEDIZM_SNAME] := LTmcItem.S['EDIZM_SNAME'];
+  LDocItem.F[Restourant.Consts.UserData.FieldDocPRICE      ] := SafeFloat(LTmcItem.S['PRICE']);
+  LDocItem.F[Restourant.Consts.UserData.FieldDocQUANT      ] := Value;
+  LDocItem.F[Restourant.Consts.UserData.FieldDocTOTAL      ] := SafeFloat(LTmcItem.S['PRICE']) * Value;
+  UserBaseOrderCalcSum;
+end;
+
+procedure TFormMain.UserBaseOrderCalcSum;
+var
+  LCounter :Integer;
+  LSum     :Double;
+begin
+  LSum := 0;
+  with FOrderCurr.A[Restourant.Consts.UserData.FieldOrder_DOCUMENT] do
+    for LCounter := 0 to Count-1 do
+      LSum := LSum + O[LCounter].F[Restourant.Consts.UserData.FieldDocTOTAL];
+  FOrderCurr.F[Restourant.Consts.UserData.FieldOrderDOCSUM] := LSum;
+  FUDB.Flush(Restourant.Consts.UserData.ORDERS);
+end;
+
+function TFormMain.UserBaseOrderLast: TJsonObject;
+begin
+  with FUDB.Tables[Restourant.Consts.UserData.ORDERS] do
+    if(Count = 0)then
+      Result := UserBaseOrderNew
+    else
+      Result := Items[Count-1]^.ObjectValue;
+end;
+
+function TFormMain.UserBaseOrderName(const ID: Integer): string;
+begin
+  Result := Restourant.Consts.UserData.ORDERSNAME + FormatFloat('000000', ID);
+end;
+
+function TFormMain.UserBaseOrderById(const ID: Integer): TJsonObject;
+var
+  LCounter :Integer;
+begin
+  Result := nil;
+  with FUDB.Tables[Restourant.Consts.UserData.ORDERS] do
+    for LCounter := 0 to Count-1 do
+    begin
+      Result := Items[LCounter]^.ObjectValue;
+      if(Result.I[Restourant.Consts.UserData.FieldOrderID] = ID)then
+        exit;
     end;
 end;
 
+function TFormMain.UserBaseOrderNew: TJsonObject;
+var
+  LName :string;
+  LID   :Integer;
+begin
+  LID    := UserBaseOrderLastId + 1;
+  LName  := UserBaseOrderName(LID);
+  Result := FUDB.Tables[Restourant.Consts.UserData.ORDERS].O[LName];
+  Result.I[Restourant.Consts.UserData.FieldOrderID          ] := LID;
+  Result.S[Restourant.Consts.UserData.FieldOrderNAME        ] := System.SysUtils.EmptyStr;
+  Result.D[Restourant.Consts.UserData.FieldOrderDATE_CREATE ] := System.SysUtils.Now;
+  Result.D[Restourant.Consts.UserData.FieldOrderDATE_COMMIT ] := System.SysUtils.Now;
+  Result.S[Restourant.Consts.UserData.FieldOrderPLATENO     ] := System.SysUtils.EmptyStr;
+  Result.S[Restourant.Consts.UserData.FieldOrderDOCNUMBERSTR] := System.SysUtils.EmptyStr;
+  Result.F[Restourant.Consts.UserData.FieldOrderDOCSUM      ] := 0;
+  FUDB.Flush(Restourant.Consts.UserData.ORDERS);
+end;
+
+procedure TFormMain.UserBaseUserLoad;
+begin
+  with FUDB.Tables[Restourant.Consts.UserData.PROFILE] do
+  begin
+    if(S[Restourant.Consts.UserData.FieldUserID] = System.SysUtils.EmptyStr)then
+    begin
+      FedtUsrID.Enabled    := True;
+      FbtnUsrRegister.Text := Restourant.Consts.Strings.btnUserRegister;
+    end
+    else
+    begin
+      FedtUsrID.Enabled    := False;
+      FbtnUsrRegister.Text := Restourant.Consts.Strings.btnUserUpdate;
+    end;
+    FedtUsrID.Text       := S[Restourant.Consts.UserData.FieldUserEMAIL    ];
+    FedtUsrFIRSTNAME.Text:= S[Restourant.Consts.UserData.FieldUserFIRSTNAME];
+    FedtUsrLASTNAME.Text := S[Restourant.Consts.UserData.FieldUserLASTNAME ];
+    FedtUsrPHONE.Text    := S[Restourant.Consts.UserData.FieldUserPHONE    ];
+    FedtUsrPWD.Text      := System.SysUtils.EmptyStr;
+    FedtUsrPWD2.Text     := System.SysUtils.EmptyStr;
+  end;
+end;
+
+function TFormMain.UserDataUserSave:Boolean;
+begin
+  Result := False;
+  if(FUDB.Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserID] = System.SysUtils.EmptyStr)then
+  begin
+    if(FedtUsrPWD.Text = System.SysUtils.EmptyStr)then
+    begin
+      ShowMessage(Restourant.Consts.Strings.ErrorUserPasswordNotEntered);
+      exit;
+    end;
+  end;
+  if( (FedtUsrPWD.Text <> System.SysUtils.EmptyStr) or (FedtUsrPWD2.Text <> System.SysUtils.EmptyStr) )then
+    if( FedtUsrPWD.Text <> FedtUsrPWD2.Text )then
+    begin
+      ShowMessage(Restourant.Consts.Strings.ErrorUserPasswordNotConfirmed);
+      exit;
+    end;
+  with FUDB.Tables[Restourant.Consts.UserData.PROFILE] do
+  begin
+    S[Restourant.Consts.UserData.FieldUserEMAIL]     := FedtUsrID.Text;
+    S[Restourant.Consts.UserData.FieldUserFIRSTNAME] := FedtUsrFIRSTNAME.Text;
+    S[Restourant.Consts.UserData.FieldUserLASTNAME]  := FedtUsrLASTNAME.Text;
+    S[Restourant.Consts.UserData.FieldUserPHONE]     := FedtUsrPHONE.Text;
+    if(FedtUsrPWD.Text <> System.SysUtils.EmptyStr)then
+    begin
+      S[Restourant.Consts.UserData.FieldUserPWDNEW]  := FedtUsrPWD.Text;
+      if(S[Restourant.Consts.UserData.FieldUserID] = System.SysUtils.EmptyStr)then
+        S[Restourant.Consts.UserData.FieldUserPWD]   := FedtUsrPWD.Text;
+    end;
+  end;
+  FUDB.Flush(Restourant.Consts.UserData.PROFILE);
+  Result := True;
+end;
+
+{$REGION 'Internet'}
 function TFormMain.HTTPGetFile(const Host, URL, FileName: string): Boolean;
 var
   LStream :TMemoryStream;
@@ -231,7 +644,7 @@ begin
   LHttp := TIdHTTP.Create(nil);
   LStream := TMemoryStream.Create;
   try
-    LHttp.Request.UserAgent := Restourant.Consts.Filenames.UrlUserAgent;
+    LHttp.Request.UserAgent := Restourant.Consts.Filenames.UrlUserAgent; // Important! Some hosters does not allow to working without client browser name.
     LHttp.Request.Host      := Host;
     LHttp.Get(URL, LStream);
     if System.IOUtils.TFile.Exists(FileName) then
@@ -246,12 +659,12 @@ end;
 
 function TFormMain.HTTPGetString(const Host, URL: string): string;
 var
-  LHttp   :TIdHttp;
+  LHttp :IdHttp.TIdHttp;
 begin
   Result := System.SysUtils.EmptyStr;
-  LHttp := TIdHTTP.Create;
+  LHttp  := IdHttp.TIdHTTP.Create;
   try
-    LHttp.Request.UserAgent := Restourant.Consts.Filenames.UrlUserAgent;
+    LHttp.Request.UserAgent := Restourant.Consts.Filenames.UrlUserAgent; // Important! Some hosters does not allow to working without client browser name.
     LHttp.Request.Host      := Host;
     Result := LHttp.Get( URL );
   finally
@@ -259,43 +672,81 @@ begin
   end;
 end;
 
-function TFormMain.CheckFolders: Boolean;
+function TFormMain.HTTPPost(const Host, URL: string; const ParamNames, ParamValues:array of string): string;
+var
+  LHttp   :IdHttp.TIdHttp;
+  LParams :TStringList;
+  LCounter:Integer;
+begin
+  Result := System.SysUtils.EmptyStr;
+  LHttp  := IdHttp.TIdHTTP.Create;
+  try
+    LHttp.HandleRedirects   := True;
+    LHttp.ReadTimeout       := 8000;
+    LHttp.Request.UserAgent := Restourant.Consts.Filenames.UrlUserAgent; // Important! Some hosters does not allow to working without client browser name.
+    LHttp.Request.Host      := Host;
+    LParams := TStringList.Create;
+    LParams.Clear;
+    for LCounter:=0 to Length(ParamNames)-1 do
+      LParams.Add( ParamNames[LCounter] + '=' + ParamValues[LCounter]);
+    Result := LHttp.Post( URL, LParams );
+  finally
+    LParams.Free;
+    LHttp.Free;
+  end;
+end;
+
+function TFormMain.HTTPPostJSON(const Host, URL, PostJSON: string): string;
+begin
+  Result := HTTPPost(Host, URL, [Restourant.Consts.Filenames.PostVariableJSON], [PostJSON]);
+end;
+{$ENDREGION 'Internet'}
+
+function TFormMain.FolderMyDocuments: string;
+begin
+  Result := System.IOUtils.TPath.GetSharedDocumentsPath;
+{$IFNDEF ANDROID}
+  Result := System.IOUtils.TPath.Combine(Result, Restourant.Consts.Filenames.FolderStore);
+{$ENDIF}
+end;
+
+function TFormMain.FoldersCheck: Boolean;
 var
   LFolder      :string;
   LFileArchive :string;
 begin
   Result := False;
   // documents/data
-  LFolder := System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetSharedDocumentsPath, Restourant.Consts.Database.Folder);
+  LFolder := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.Database.Folder);
   if not TDirectory.Exists(LFolder) then
     TDirectory.CreateDirectory(LFolder);
   // documents/userdata
-  LFolder := System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetSharedDocumentsPath, Restourant.Consts.UserData.Folder);
+  LFolder := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.UserData.Folder);
   if not TDirectory.Exists(LFolder) then
     TDirectory.CreateDirectory(LFolder);
   // documents/images
-  LFolder := System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetSharedDocumentsPath, Restourant.Consts.Filenames.FolderImages);
+  LFolder := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.Filenames.FolderImages);
   if not TDirectory.Exists(LFolder) then
     TDirectory.CreateDirectory(LFolder);
   // documents/images/tmc
-  LFolder := ExtractFilePath(GetTMCImage(0));
+  LFolder := ExtractFilePath(ImageFileNameTMC(0));
   if not TDirectory.Exists(LFolder) then
     TDirectory.CreateDirectory(LFolder);
   // documents/data/
-  if not TFile.Exists( DataFilePath(Restourant.Consts.Database.C) ) then
+  if not TFile.Exists( DataBaseFilePath(Restourant.Consts.Database.C) ) then
   begin
-    LFileArchive := System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetSharedDocumentsPath, Restourant.Consts.Database.PackedFile);
+    LFileArchive := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.Database.PackedFile);
     if not TFile.Exists(LFileArchive) then
       ExtractFileFromResource(Restourant.Consts.Database.Resource,  LFileArchive);
-    ExtractFileArchive(LFileArchive, ExtractFilePath( DataFilePath(Restourant.Consts.Database.C) ) );
+    ExtractFileArchive(LFileArchive, ExtractFilePath( DataBaseFilePath(Restourant.Consts.Database.C) ) );
   end;
   // documents/images/tmc/noimage.jpg
-  if not TFile.Exists( GetTMCImage(0) ) then
+  if not TFile.Exists( ImageFileNameTMC(0) ) then
   begin
-    LFileArchive := System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetSharedDocumentsPath, Restourant.Consts.Filenames.FileNameImageTMCPacked);
+    LFileArchive := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.Filenames.FileNameImageTMCPacked);
     if not TFile.Exists(LFileArchive) then
       HTTPGetFile(Restourant.Consts.Filenames.UrlHost, Restourant.Consts.Filenames.UrlImagesZip, LFileArchive );
-    ExtractFileArchive(LFileArchive, ExtractFilePath(GetTMCImage(0)) );
+    ExtractFileArchive(LFileArchive, ExtractFilePath(ImageFileNameTMC(0)) );
   end;
   Result := True;
 end;
@@ -307,76 +758,21 @@ end;
 
 constructor TFormMain.CreateNew(AOwner: TComponent; Dummy: NativeInt);
 var
-  LBgrImage :TImage;
-  LStream   :TResourceStream;
-  LBtn      :TImage;
+  LLayout :TLayout;
+  LBgr    :TRectangle;
 begin
   inherited CreateNew(aOwner, Dummy);
   Application.Title := Restourant.Consts.Strings.ApplicationTitle;
-  Caption  := Restourant.Consts.Strings.ApplicationTitle;
-  CheckFolders;
-  FDB := TJsonDataBase.Create(Self);
-  with FDB do
-  begin
-    DataBasePath := System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetSharedDocumentsPath, Restourant.Consts.Database.Folder);
-    FileExt      := Restourant.Consts.Database.FileExt;
-    AddTable( Restourant.Consts.Database.C );
-    AddTable( Restourant.Consts.Database.R_TMC_CTGR );
-    AddTable( Restourant.Consts.Database.R_TMC_GROUPSHARE );
-    AddTable( Restourant.Consts.Database.R_TMC );
-  end;
-  FUDB := TJsonDataBase.Create(Self);
-  with FUDB do
-  begin
-    DataBasePath := System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetSharedDocumentsPath, Restourant.Consts.UserData.Folder);
-    FileExt      := Restourant.Consts.UserData.FileExt;
-    NewTable( Restourant.Consts.UserData.ORDERS );
-    NewTable( Restourant.Consts.UserData.DETAIL );
-  end;
+  Caption    := Restourant.Consts.Strings.ApplicationTitle;
+  FLang      := Low(Restourant.Consts.Strings.TLang);
+  FoldersCheck;
+  UserBaseCreate;
+  DataBaseCreate;
+  FOrderCurr := UserBaseOrderLast;
 
   FGestMan := TGestureManager.Create(Self);
 
-  FTopBar := TRectangle.Create(Self);
-  with FTopBar do
-  begin
-    Parent       := Self;
-    HitTest      := False;
-    Position.X   := 0;
-    Position.Y   := 0;
-    Height       := 64;
-    Align        := FMX.Types.TAlignLayout.Top;
-    Fill.Color   := Restourant.Consts.Colors.Material[0];
-    Fill.Kind    := FMX.Graphics.TBrushKind.Solid;
-    Stroke.Color := FTopBar.Fill.Color;
-    Stroke.Kind  := FMX.Graphics.TBrushKind.None;
-  end;
-  FTopBarLabel := TLabel.Create(Self);
-  with FTopBarLabel do
-  begin
-    Parent         := FTopBar;
-    StyledSettings := [];
-    AutoSize       := False;
-    Position.X     := 0;
-    Position.Y     := 0;
-    Height         := FTopBar.Height;
-    Align          := FMX.Types.TAlignLayout.Client;
-    WordWrap       := False;
-    Text           := Restourant.Consts.Strings.ApplicationTitle;
-    Font.Family    := 'Times New Roman';
-    Font.Size      := 32;
-    Font.Style     := [System.UITypes.TFontStyle.fsBold, System.UITypes.TFontStyle.fsItalic];
-    FontColor      := $FFFFFFFF;
-    TextSettings.HorzAlign := FMX.Types.TTextAlign.Leading;
-  end;
-  FTopBtnBack  := CreateTopButton(FMX.Types.TAlignLayout.Left , 'BACK', actBackExecute , FTopBtnBackImg );
-  with FTopBtnBackImg do
-  begin
-    OnMouseDown := DoTopButtonMouseDown;
-    OnMouseUp   := DoTopButtonMouseUp;
-  end;
-  FTopBtnUser  := CreateTopButton(FMX.Types.TAlignLayout.Right, 'USER', actUserExecute , FTopBtnUserImg );
-  FTopBtnOrder := CreateTopButton(FMX.Types.TAlignLayout.Right, 'CART', actOrderExecute, FTopBtnOrderImg);
-  FTopBtnMenu  := CreateTopButton(FMX.Types.TAlignLayout.Right, 'MENU', actMenuExecute , FTopBtnMenuImg );
+  CreateControlsTopBar;
 
   FtcMain := TTabControl.Create(Self);
   with FtcMain do
@@ -410,19 +806,58 @@ begin
     Align       := FMX.Types.TAlignLayout.Client;
     TabPosition := FMX.TabControl.TTabPosition.None;
   end;
-  FtiTMCH := FtcTMC.Add(TTabItem); FtiTMCH.Text := 'H'; CreateControlsTMCHor(FtiTMCH);
-  FtiTMCV := FtcTMC.Add(TTabItem); FtiTMCV.Text := 'V'; CreateControlsTMCVer(FtiTMCV);
+  FtiTMCH := FtcTMC.Add(TTabItem); FtiTMCH.Text := 'H';
+  FtiTMCV := FtcTMC.Add(TTabItem); FtiTMCV.Text := 'V';
   FtcTMC.ActiveTab := FtiTMCV;
 
-  FlbxCategory := CreateListbox(FtiMenuCat  ,'BACKGROUND');
-  FlbxGroup    := CreateListbox(FtiMenuGroup,'BACKGROUND01');
-  FlbxTMC      := CreateListbox(FtiMenuList ,'BACKGROUND02');
+  FtcOrder := TTabControl.Create(Self);
+  with FtcOrder do
+  begin
+    Parent      := FtiMainOrder;
+    Align       := FMX.Types.TAlignLayout.Client;
+    TabPosition := FMX.TabControl.TTabPosition.Top;
+  end;
+  FtiOrdersList := FtcOrder.Add(TTabItem); FtiOrdersList.Text := Restourant.Consts.Strings.TabItemOrderList;
+  FtiOrder      := FtcOrder.Add(TTabItem); FtiOrder.Text      := Restourant.Consts.Strings.TabItemOrder;
+  FtcOrder.ActiveTab := FtiOrder;
+
+  FlbxCategory   := CreateListbox(FtiMenuCat    ,'BACKGROUND');
+  FlbxGroup      := CreateListbox(FtiMenuGroup  ,'BACKGROUND01');
+  FlbxList       := CreateListbox(FtiMenuList   ,'BACKGROUND02');
+  FlbxOrdersList := CreateListbox(FtiOrdersList ,'BACKGROUND03');
+
+  CreateControlsTMCHor(FtiTMCH);
+  CreateControlsTMCVer(FtiTMCV);
+  CreateControlsOrd ( FtiOrder );
+  CreateControlsUser( FtiMainUser  );
 
   FtcMain.OnChange := DoChangeTabControl;
   FtcMenu.OnChange := DoChangeTabControl;
   DoChangeTabControl(nil);
 
-  FillCategories;
+  FillCat;
+  FillOrders;
+  FillOrder(FOrderCurr);
+  FillUser;
+
+  LLayout   := TLayout.New(FtiMenuCat,FlbxCategory.Parent,0,1200,80,200,FMX.Types.TAlignLayout.Bottom,8,8,8,8,0,0,0,0);
+    LlblRestourantName := TLabel.New(FtiMenuCat,LLayout,0,0,32,200,FMX.Types.TAlignLayout.Top,0,0,0,0,0,0,0,0,
+                       Restourant.Consts.Strings.ApplicationTitle, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading,
+                       $FF000000, 28, [System.UITypes.TFontStyle.fsBold]);
+    LlblRestouarntAddr := TLabel.New(FtiMenuCat,LLayout,0,40,LLayout.Height,200,FMX.Types.TAlignLayout.Client,0,0,0,0,0,0,0,0,
+                       System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FF000000, 12, [System.UITypes.TFontStyle.fsBold]);
+  LlblRestourantName.Font.Family := 'Times New Roman';
+  LlblRestourantName.Text := DataBaseConstString('ENTNAMETYPE') + ' ' + DataBaseConstString('ENTNAME');
+  LlblRestouarntAddr.Text :=
+    DataBaseConstString('ENTADDR'  )+#13#10+
+    DataBaseConstString('ENTPHONES')+#13#10+
+    'E-mail: '+DataBaseConstString('ENTEMAIL');
+
+  LBgr := TRectangle.New(FtiOrdersList, FtiOrdersList,0,1200,32,200,FMX.Types.TAlignLayout.Bottom,16,16,16,16,0,0,0,0, ColorMaterial(0), ColorMaterial(0));
+    FbtnOrdersClear := TButton.New(FtiOrdersList, LBgr, 0, 0, LLayout.Height, 200, FMX.Types.TAlignLayout.Client,0,0,0,0,0,0,0,0,
+                Restourant.Consts.Strings.btnOrderClear, FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Center, {$IFDEF ANDROID}$FFFFFFFF{$ELSE}$FF000000{$ENDIF}, 18, [System.UITypes.TFontStyle.fsBold]);
+    FbtnOrdersClear.OnClick := DoClickOrdersClear;
+
 
   FTimerUpdate := FMX.Types.TTimer.Create(Self);
   with FTimerUpdate do
@@ -432,63 +867,45 @@ begin
     Enabled  := True;
   end;
   DoOnTimerUpdate(FTimerUpdate);
-end;
 
-function TFormMain.CreateTopButton(const AnAlign:FMX.Types.TAlignLayout;
-                  const ResourceName:string; AnOnClick:TNotifyEvent; var AnImage:FMX.Objects.TImage): FMX.Objects.TRectangle;
-var
-  LStream :TResourceStream;
-begin
-  Result := TRectangle.Create(FTopBar);
-  with Result do
+  FFlagOrder := False;
+  FTimerOrder := FMX.Types.TTimer.Create(Self);
+  with FTimerOrder do
   begin
-    Parent            := FTopBar;
-    Height            := FTopBar.Height;
-    Width             := FTopBar.Height;
-    Align             := AnAlign;
-    Fill.Color        := FTopBar.Fill.Color;
-    Fill.Kind         := FMX.Graphics.TBrushKind.Solid;
-    Stroke.Color      := FTopBar.Fill.Color;
-    Stroke.Kind       := FMX.Graphics.TBrushKind.None;
-    HitTest           := True;
-    Margins.Left      := 0;
-    Margins.Top       := 0;
-    Margins.Right     := 0;
-    Margins.Bottom    := 0;
-    Padding.Left      := 8;
-    Padding.Top       := 8;
-    Padding.Right     := 8;
-    Padding.Bottom    := 8;
+    Interval := 1000;
+    OnTimer  := DoOnTimerOrder;
+    Enabled  := True;
   end;
-  AnImage := TImage.Create(Result);
-  with AnImage do
-  begin
-    Parent      := Result;
-    Align       := FMX.Types.TAlignLayout.Client;
-    WrapMode    := FMX.Objects.TImageWrapMode.Stretch;
-    OnClick     := AnOnClick;
-    OnMouseDown := DoTopButtonMouseDown;
-  end;
-  if(ResourceName.Length >0)then
-    try
-      LStream := TResourceStream.Create(hInstance, ResourceName, RT_RCDATA );
-      AnImage.Bitmap.LoadFromStream(LStream);
-    finally
-      LStream.Free;
-    end;
+{$IFNDEF ANDROID}
+  WindowState := System.UITypes.TWindowState.wsMaximized;
+{$ENDIF}
 end;
 
 destructor TFormMain.Destroy;
 begin
+  if FTimerOrder.Enabled then
+    FTimerOrder.Enabled := False;
+  FreeAndNil(FTimerOrder);
   if FTimerUpdate.Enabled then
     FTimerUpdate.Enabled := False;
   FreeAndNil(FTimerUpdate);
   FreeAndNil(FtcMenu);
   FreeAndNil(FGestMan);
-  FUDB.Clear(True);
-  FreeAndNil(FUDB);
-  FreeAndNil(FDB);
+  UserBaseFree;
+  DataBaseFree;
   inherited Destroy;
+end;
+
+procedure TFormMain.DoOnTimerOrder(Sender: TObject);
+begin
+  FFlagOrder := not FFlagOrder;
+  if(FOrderCurr.A[Restourant.Consts.UserData.FieldOrder_DOCUMENT].Count > 0)then
+  begin
+    if(FtcMain.ActiveTab = FtiMainOrder)then
+      FTopBtnOrder.Fill.Color := ColorButtonTopBar( True )
+    else
+      FTopBtnOrder.Fill.Color := ColorButtonOrder( FFlagOrder );
+  end;
 end;
 
 procedure TFormMain.DoOnTimerUpdate(Sender: TObject);
@@ -502,29 +919,30 @@ begin
       LWebVersion  :Integer;
       LFileArchive :string;
     begin
-      LDBVersion := GetConstInteger('DBVERSION');
+      LDBVersion := DataBaseConstInteger('DBVERSION');
       try
         LWebVersion := HTTPGetString(Restourant.Consts.Filenames.UrlHost, Restourant.Consts.Filenames.UrlDatabaseVersion).ToInteger();
       except
         LWebVersion := LDBVersion;
       end;
       if(LWebVersion > LDBVersion)then
-      begin // database
-        LFileArchive := System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetSharedDocumentsPath, Restourant.Consts.Database.PackedFile);
+      begin
+        // database
+        LFileArchive := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.Database.PackedFile);
         if HTTPGetFile(Restourant.Consts.Filenames.UrlHost, Restourant.Consts.Filenames.UrlDatabaseZip, LFileArchive ) then
-          ExtractFileArchive(LFileArchive, ExtractFilePath( DataFilePath(Restourant.Consts.Database.C) ) );
-
-        LFileArchive := System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetSharedDocumentsPath, Restourant.Consts.Filenames.FileNameImageTMCPackedTemp);
+           ExtractFileArchive(LFileArchive, ExtractFilePath( DataBaseFilePath(Restourant.Consts.Database.C) ) );
+        // images
+        LFileArchive := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.Filenames.FileNameImageTMCPackedTemp);
         if HTTPGetFile(Restourant.Consts.Filenames.UrlHost, Restourant.Consts.Filenames.UrlImagesZip, LFileArchive ) then
-        begin
-          ExtractFileArchive(LFileArchive, ExtractFilePath(GetTMCImage(0)) );
-          TFile.Delete(LFileArchive);
-        end;
-
+          if ExtractFileArchive(LFileArchive, ExtractFilePath(ImageFileNameTMC(0)) )then
+            TFile.Delete(LFileArchive);
+        // sync
         TThread.Synchronize(nil,
           procedure
           begin
-            FDB.ReloadAll;
+            DataBaseFree;
+            DataBaseCreate;
+            FillCat;
           end
         );
       end;
@@ -532,10 +950,83 @@ begin
   ).Start;
 end;
 
+function TFormMain.CreateTopButton(const AnAlign:FMX.Types.TAlignLayout; const ResourceName:string; AnOnClick:TNotifyEvent; var AnImage:FMX.Objects.TImage): FMX.Objects.TRectangle;
+begin
+  Result := TRectangle.New(FTopBar,FTopBar,0,0,FTopBar.Height,FTopBar.Height,AnAlign,0,0,0,0,8,8,8,8,FTopBar.Fill.Color, FTopBar.Fill.Color);
+  with Result do
+  begin
+    HitTest     := True;
+    OnMouseDown := DoMouseDownTopBtn;
+    OnClick     := AnOnClick;
+  end;
+  AnImage := TImage.New(Result,Result,0,0,Result.Height,Result.Width,FMX.Types.TAlignLayout.Client, 0,0,0,0,0,0,0,0,FMX.Objects.TImageWrapMode.Stretch);
+  ImageLoadFromResource(AnImage.Bitmap, ResourceName);
+end;
+
+function TFormMain.CreateRectButton(Parent:TControl; const aWidth:Integer; const AnAlign:FMX.Types.TAlignLayout; const Caption, ResourceName:string; AnOnClick:TNotifyEvent): TRectangle;
+var
+  LLabel :TLabel;
+  LImage :FMX.Objects.TImage;
+begin
+  Result := TRectangle.New(Parent,Parent,0,0,Parent.Height,aWidth,AnAlign,0,0,0,0,0,0,0,0, $FFFFFFFF, ColorMaterial(0) );
+  with Result do
+  begin
+    HitTest     := True;
+    OnClick     := AnOnClick;
+    OnMouseDown := DoMouseDownBtn;
+    OnMouseUp   := DoMouseUpBtn;
+  end;
+  LImage := TImage.New(Result,Result,0,0,Result.Height,Result.Height,FMX.Types.TAlignLayout.Client, 2,2,2,2,0,0,0,0,FMX.Objects.TImageWrapMode.Stretch);
+  if(ResourceName.Length > 0)then
+  begin
+    ImageLoadFromResource(LImage.Bitmap, ResourceName);
+    LImage.Align := FMX.Types.TAlignLayout.Left;
+    LImage.Width := Result.Height;
+  end
+  else
+    LImage.Width := 0;
+  if(Caption <> System.SysUtils.EmptyStr)then
+  begin
+    LLabel := TLabel.New(Result,Result,0,0,Result.Height, LImage.Width+1, FMX.Types.TAlignLayout.Client, 0,0,0,0,0,0,0,0,
+                Caption, FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Center, ColorMaterial(0), 12, [System.UITypes.TFontStyle.fsBold]);
+  end;
+end;
+
+function TFormMain.CreateRectButtonTmc(Parent:TControl; const TMC_ID:Integer; AnOnClick:TNotifyEvent): FMX.Objects.TRectangle;
+var
+  LImage :FMX.Objects.TImage;
+begin
+  Result := TRectangle.New(Parent,Parent,0,0,Parent.Height,Parent.Width,FMX.Types.TAlignLayout.Client,0,0,0,0,0,0,0,0, $FFFFFFFF, ColorMaterial(0) );
+  with Result do
+  begin
+    Tag         := TMC_ID;
+    HitTest     := True;
+    OnClick     := AnOnClick;
+  end;
+  LImage := TImage.New(Result,Result,0,0,Result.Height,Result.Height,FMX.Types.TAlignLayout.Client, 2,2,2,2,0,0,0,0,FMX.Objects.TImageWrapMode.Stretch);
+  with LImage do
+  begin
+    Tag := TMC_ID;
+    Bitmap.LoadFromFile( ImageFileNameTMC(TMC_ID) );
+  end;
+end;
+
+procedure TFormMain.ImageLoadFromResource(Bitmap: TBitmap; const BackgroundResource: string);
+var
+  LStream   :TResourceStream;
+begin
+  if(BackgroundResource.Length >0)then
+    try
+      LStream := TResourceStream.Create( hInstance, BackgroundResource, RT_RCDATA );
+      Bitmap.LoadFromStream( LStream );
+    finally
+      LStream.Free;
+    end;
+end;
+
 function TFormMain.CreateListbox(aParentObj: TFMXObject; const BackgroundResource:string): TListBox;
 var
   LBgrImage :TImage;
-  LStream   :TResourceStream;
 begin
   LBgrImage := TImage.Create(aParentObj);
   with LBgrImage do
@@ -543,14 +1034,8 @@ begin
     Parent   := aParentObj;
     Align    := FMX.Types.TAlignLayout.Client;
     WrapMode := FMX.Objects.TImageWrapMode.Stretch;
+    ImageLoadFromResource(Bitmap, BackgroundResource);
   end;
-  if(BackgroundResource.Length >0)then
-    try
-      LStream := TResourceStream.Create(hInstance, BackgroundResource, RT_RCDATA );
-      LBgrImage.Bitmap.LoadFromStream(LStream);
-    finally
-      LStream.Free;
-    end;
   Result := TListBox.Create(Self);
   with Result do
   begin
@@ -564,219 +1049,206 @@ begin
   end;
 end;
 
-procedure TFormMain.CreateControlsTMCVer(aParentObj :TFMXObject);
+function TFormMain.CreateListBoxItem(aListBox: TListBox; const aItemHeight, aItemWidth :Single;
+                  const aTag, aColorIndex:Integer; aOnClick, aOnDblClick:TNotifyEvent; var aBackground :TRectangle):TListBoxItem;
 begin
-  FVbgrTMC := TRectangle.Create(aParentObj);
-  with FVbgrTMC do
+  Result := TListBoxItem.Create(aListBox);
+  with Result do
   begin
-    Parent         := aParentObj;
-    HitTest        := False;
-    Position.X     := 0;
-    Position.Y     := 0;
-    Align          := FMX.Types.TAlignLayout.Client;
-    Fill.Color     := MaterialColor( Random( Length(Restourant.Consts.Colors.Material) - 1 ) );
-    Fill.Kind      := FMX.Graphics.TBrushKind.Solid;
-    Stroke.Color   := Fill.Color;
-    Stroke.Kind    := FMX.Graphics.TBrushKind.None;
-    Padding.Left   := 16;
-    Padding.Top    := 16;
-    Padding.Right  := 16;
-    Padding.Bottom := 16;
+    Parent          := aListBox;
+    Height          := aItemHeight;
+    if(aItemWidth <> 0)then
+      Width         := aItemWidth;
+    Tag             := aTag;
+    TagString       := ColorMaterial(aColorIndex).ToString();
+    if Assigned(aOnDblClick)then
+    begin
+      OnDblClick    := aOnDblClick;
+    end
+    else
+    begin
+      OnClick       := aOnClick;
+      OnMouseDown   := DoMouseDownListItem;
+      OnMouseUp     := DoMouseUpListItem;
+    end;
+    Margins.Left    := 8;
+    Margins.Top     := 8;
+    Margins.Right   := 8;
+    Margins.Bottom  := 0;
   end;
-  FVimgTMC_IMAGE := TImage.Create(aParentObj);
-  with FVimgTMC_IMAGE do
+  aBackground := TRectangle.New(Result,Result,0,0,Result.Height, Result.Width, FMX.Types.TAlignLayout.Client, 0,0,0,0,0,0,0,0,Result.TagString.ToInteger(), Result.TagString.ToInteger());
+  Result.TagObject  := aBackground;
+end;
+
+procedure TFormMain.CreateControlsUser(aParentObj :TFMXObject);
+
+  function RectItem(aOwner :TComponent; aOwnerParent :TFMXObject;
+             const aCaption:string; const aTop:Integer;
+             var aLabel:TLabel; var aEdit:TEdit):TRectangle;
   begin
-    Parent         := FVbgrTMC;
-    Height         := 220;
-    Width          := 330;
-    Align          := FMX.Types.TAlignLayout.Top;
-    WrapMode       := FMX.Objects.TImageWrapMode.Stretch;
+    Result := TRectangle.New(aOwner, aOwnerParent, 0, aTop, 32,400, FMX.Types.TAlignLayout.Top,0,16,0,0,0,0,0,0, ColorMaterial(0), ColorMaterial(0));
+
+    aLabel := TLabel.New (aOwner, Result    , 0, 0, Result.Height, 96, FMX.Types.TAlignLayout.Left,8,0,8,0,0,0,0,0,
+                aCaption, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Center, $FFFFFFFF, 16, [System.UITypes.TFontStyle.fsBold]);
+    aEdit  := TEdit.New  (aOwner, Result    ,97, 0, Result.Height, 200, FMX.Types.TAlignLayout.Client,0,0,0,0,0,0,0,0,
+                System.SysUtils.EmptyStr , FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Center,
+                {$IFDEF ANDROID}$FFFFFFFF{$ELSE}$FF000000{$ENDIF}, 16, [System.UITypes.TFontStyle.fsBold]);
   end;
-  FVlblTMC_NAME := TLabel.Create(aParentObj);
-  with FVlblTMC_NAME do
+
+var
+  LItem :TRectangle;
+begin
+  FsbUser  := TScrollBox.New(aParentObj, aParentObj, 0, 0, 400, 400,FMX.Types.TAlignLayout.Client,0,0,0,0,0,0,0,0);
+  FbgrUser := TImage.New(aParentObj, FsbUser, 0,0,600,400, FMX.Types.TAlignLayout.None, 0,0,0,0,16,0,16,4, FMX.Objects.TImageWrapMode.Stretch);
+  ImageLoadFromResource(FbgrUser.Bitmap, 'BACKGROUND04');
+
+  LItem := RectItem(aParentObj,FbgrUser,'E-mail'   ,  0*10,FlblUsrID       ,FedtUsrID       );
+  LItem := RectItem(aParentObj,FbgrUser,'Имя'      , 32*10,FlblUsrFIRSTNAME,FedtUsrFIRSTNAME);
+  LItem := RectItem(aParentObj,FbgrUser,'Фамилия'  , 65*10,FlblUsrLASTNAME ,FedtUsrLASTNAME );
+  LItem := RectItem(aParentObj,FbgrUser,'Телефон'  , 97*10,FlblUsrPHONE    ,FedtUsrPHONE    );
+  LItem := RectItem(aParentObj,FbgrUser,'Пароль'   ,129*10,FlblUsrPWD      ,FedtUsrPWD      );
+  LItem := RectItem(aParentObj,FbgrUser,'  еще раз',161*10,FlblUsrPWD2     ,FedtUsrPWD2     );
+
+  LItem := TRectangle.New(aParentObj, FbgrUser, 0, 400,32,200,FMX.Types.TAlignLayout.Top,0,16,0,0,0,0,0,0, ColorMaterial(0), ColorMaterial(0));
+  FbtnUsrRegister := TButton.New(aParentObj, LItem, 0, 0, LItem.Height, 200, FMX.Types.TAlignLayout.Client,0,0,0,0,0,0,0,0,
+                Restourant.Consts.Strings.btnUserRegister, FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Center, {$IFDEF ANDROID}$FFFFFFFF{$ELSE}$FF000000{$ENDIF}, 18, [System.UITypes.TFontStyle.fsBold]);
+
+  FedtUsrPHONE.FilterChar := '+1234567890';
+  FedtUsrPWD.Password     := True;
+  FedtUsrPWD2.Password    := True;
+  FbtnUsrRegister.OnClick := DoClickUserRegister;
+end;
+
+procedure TFormMain.CreateControlsTopBar;
+var
+  LLang :Restourant.Consts.Strings.TLang;
+  LImg  :TImage;
+begin
+  FTopBar := TRectangle.New(Self,Self,0,0,64,Self.Width, FMX.Types.TAlignLayout.Top,0,0,0,0,0,0,0,0,ColorMaterial(0),ColorMaterial(0));
+  FTopBtnBack  := CreateTopButton(FMX.Types.TAlignLayout.Left , 'BACK', actBackExecute , FTopBtnBackImg );
+  FTopBtnUser  := CreateTopButton(FMX.Types.TAlignLayout.Right, 'USER', actUserExecute , FTopBtnUserImg );
+  FTopBtnOrder := CreateTopButton(FMX.Types.TAlignLayout.Right, 'CART', actOrderExecute, FTopBtnOrderImg);
+  FTopBtnMenu  := CreateTopButton(FMX.Types.TAlignLayout.Right, 'MENU', actMenuExecute , FTopBtnMenuImg );
+  with FTopBtnBack do
   begin
-    Parent         := FVbgrTMC;
-    StyledSettings := [];
-    AutoSize       := False;
-    Position.Y     := FVimgTMC_IMAGE.Height + 2;
-    Height         := 48;
-    Align          := FMX.Types.TAlignLayout.Top;
-    WordWrap       := False;
-    Text           := ' ';
-    Font.Size      := 20;
-    Font.Style     := [System.UITypes.TFontStyle.fsBold];
-    FontColor      := $FFFFFFFF;
-    TextAlign      := FMX.Types.TTextAlign.Leading;
-    VertTextAlign  := FMX.Types.TTextAlign.Leading;
+    OnMouseDown := DoMouseDownTopBtn;
+    OnMouseUp   := DoMouseUpTopBtn;
   end;
-  FVlblTMC_COMENT := TLabel.Create(aParentObj);
-  with FVlblTMC_COMENT do
+
+  exit;
+  for LLang := High(Restourant.Consts.Strings.TLang) downto Low(Restourant.Consts.Strings.TLang) do
   begin
-    Parent         := FVbgrTMC;
-    StyledSettings := [];
-    AutoSize       := False;
-    Position.Y     := FVlblTMC_NAME.Position.Y + FVlblTMC_NAME.Height + 2;
-    Height         := 160;
-    Align          := FMX.Types.TAlignLayout.Top;
-    WordWrap       := True;
-    Text           := System.SysUtils.EmptyStr;
-    Font.Size      := 12;
-    Font.Style     := [];
-    FontColor      := $FFFFFFFF;
-    TextAlign      := FMX.Types.TTextAlign.Leading;
-    VertTextAlign  := FMX.Types.TTextAlign.Leading;
-  end;
-  FVlblTMC_PRICE := TLabel.Create(aParentObj);
-  with FVlblTMC_PRICE do
-  begin
-    Parent         := FVbgrTMC;
-    StyledSettings := [];
-    AutoSize       := False;
-    Position.Y     := FVlblTMC_COMENT.Position.Y + FVlblTMC_COMENT.Height;
-    Height         := 48;
-    Align          := FMX.Types.TAlignLayout.Top;
-    WordWrap       := True;
-    Text           := Restourant.Consts.Strings.TmcPrice;
-    Font.Size      := 24;
-    Font.Style     := [System.UITypes.TFontStyle.fsBold];
-    FontColor      := $FFFFFFFF;
-    TextAlign      := FMX.Types.TTextAlign.Trailing;
-    VertTextAlign  := FMX.Types.TTextAlign.Leading;
-  end;
-  FVlblTMC_EDIZM := TLabel.Create(aParentObj);
-  with FVlblTMC_EDIZM do
-  begin
-    Parent         := FVlblTMC_PRICE;
-    StyledSettings := [];
-    AutoSize       := False;
-    Position.X     := 0;
-    Position.Y     := 0;
-    Height         := 20;
-    Width          := 160;
-    Align          := FMX.Types.TAlignLayout.Left;
-    Text           := Restourant.Consts.Strings.TmcEdizm;
-    Font.Size      := 14;
-    Font.Style     := [System.UITypes.TFontStyle.fsBold];
-    FontColor      := $FFFFFFFF;
-    TextAlign      := FMX.Types.TTextAlign.Leading;
-    VertTextAlign  := FMX.Types.TTextAlign.Leading;
+    FTopBtnLang[LLang] := CreateTopButton(FMX.Types.TAlignLayout.Right, 'FLAG'+IntToStr( Restourant.Consts.Strings.LangId[LLang] ), DoClickLang, LImg );
+    FTopBtnLang[LLang].Width         := 52;
+    FTopBtnLang[LLang].Padding.Left  := 2;
+    FTopBtnLang[LLang].Padding.Right := 2;
+    FTopBtnLang[LLang].Tag           := Restourant.Consts.Strings.TLangToInt(LLang);
+    FTopBtnLang[LLang].Fill.Color    := ColorButtonTopBar(LLang = FLang);
   end;
 end;
 
-procedure TFormMain.CreateControlsTMCHor(aParentObj :TFMXObject);
+procedure TFormMain.CreateControlsOrd(aParentObj :TFMXObject);
+var
+  LBgr    :TRectangle;
+  LLabel  :TLabel;
+  LLayout :TLayout;
+  LBackgr :TRectangle;
 begin
-  FHbgrTMC := TRectangle.Create(aParentObj);
-  with FHbgrTMC do
-  begin
-    Parent         := aParentObj;
-    HitTest        := False;
-    Position.X     := 0;
-    Position.Y     := 0;
-    Align          := FMX.Types.TAlignLayout.Client;
-    Fill.Color     := MaterialColor( Random( Length(Restourant.Consts.Colors.Material) - 1 ) );
-    Fill.Kind      := FMX.Graphics.TBrushKind.Solid;
-    Stroke.Color   := Fill.Color;
-    Stroke.Kind    := FMX.Graphics.TBrushKind.None;
-    Padding.Left   := 16;
-    Padding.Top    := 16;
-    Padding.Right  := 16;
-    Padding.Bottom := 16;
-  end;
-  FHimgTMC_IMAGE := TImage.Create(aParentObj);
-  with FHimgTMC_IMAGE do
-  begin
-    Parent         := FHbgrTMC;
-    Height         := 220;
-    Width          := 330;
-    Align          := FMX.Types.TAlignLayout.Left;
-    WrapMode       := FMX.Objects.TImageWrapMode.Stretch;
-  end;
-  FHltClient := TLayout.Create(aParentObj);
-  with FHltClient do
-  begin
-    Parent         := FHbgrTMC;
-    Height         := 220;
-    Width          := Self.Width - FHimgTMC_IMAGE.Width;
-    Align          := FMX.Types.TAlignLayout.Client;
-    Padding.Left   := 16;
-    Padding.Top    := 0;
-    Padding.Right  := 16;
-    Padding.Bottom := 0;
-  end;
-  FHlblTMC_NAME := TLabel.Create(aParentObj);
-  with FHlblTMC_NAME do
-  begin
-    Parent         := FHltClient;
-    StyledSettings := [];
-    AutoSize       := False;
-    Position.Y     := 0;
-    Height         := 48;
-    Align          := FMX.Types.TAlignLayout.Top;
-    WordWrap       := False;
-    Text           := ' ';
-    Font.Size      := 20;
-    Font.Style     := [System.UITypes.TFontStyle.fsBold];
-    FontColor      := $FFFFFFFF;
-    TextAlign      := FMX.Types.TTextAlign.Leading;
-    VertTextAlign  := FMX.Types.TTextAlign.Leading;
-  end;
-  FHlblTMC_COMENT := TLabel.Create(aParentObj);
-  with FHlblTMC_COMENT do
-  begin
-    Parent         := FHltClient;
-    StyledSettings := [];
-    AutoSize       := False;
-    Position.Y     := FHlblTMC_NAME.Position.Y + FHlblTMC_NAME.Height + 2;
-    Height         := 192;
-    Align          := FMX.Types.TAlignLayout.Top;
-    WordWrap       := True;
-    Text           := ' ';
-    Font.Size      := 12;
-    Font.Style     := [];
-    FontColor      := $FFFFFFFF;
-    TextAlign      := FMX.Types.TTextAlign.Leading;
-    VertTextAlign  := FMX.Types.TTextAlign.Leading;
-  end;
-  FHlblTMC_PRICE := TLabel.Create(aParentObj);
-  with FHlblTMC_PRICE do
-  begin
-    Parent         := FHltClient;
-    StyledSettings := [];
-    AutoSize       := False;
-    Position.Y     := FHlblTMC_COMENT.Position.Y + FHlblTMC_COMENT.Height;
-    Height         := 48;
-    Align          := FMX.Types.TAlignLayout.Top;
-    WordWrap       := True;
-    Text           := Restourant.Consts.Strings.TmcPrice;
-    Font.Size      := 24;
-    Font.Style     := [System.UITypes.TFontStyle.fsBold];
-    FontColor      := $FFFFFFFF;
-    TextAlign      := FMX.Types.TTextAlign.Trailing;
-    VertTextAlign  := FMX.Types.TTextAlign.Leading;
-  end;
-  FHlblTMC_EDIZM := TLabel.Create(aParentObj);
-  with FHlblTMC_EDIZM do
-  begin
-    Parent         := FHlblTMC_PRICE;
-    StyledSettings := [];
-    AutoSize       := False;
-    Position.X     := 0;
-    Position.Y     := 0;
-    Height         := 20;
-    Width          := 160;
-    Align          := FMX.Types.TAlignLayout.Left;
-    Text           := Restourant.Consts.Strings.TmcEdizm;
-    Font.Size      := 14;
-    Font.Style     := [System.UITypes.TFontStyle.fsBold];
-    FontColor      := $FFFFFFFF;
-    TextAlign      := FMX.Types.TTextAlign.Leading;
-    VertTextAlign  := FMX.Types.TTextAlign.Leading;
-  end;
+  FbgrOrder := TImage.New(aParentObj,aParentObj,0,0,200,300,FMX.Types.TAlignLayout.Client,0,0,0,0,16,0,16,4, FMX.Objects.TImageWrapMode.Stretch);
+  ImageLoadFromResource(FbgrOrder.Bitmap, 'BACKGROUND01');
+
+  LLayout   := TLayout.New(aParentObj,FbgrOrder,0, 0,20,200,FMX.Types.TAlignLayout.Top,0,0,0,0,0,0,0,0);
+    LLabel  := TLabel.New(aParentObj,LLayout,0,0,LLayout.Height,96,FMX.Types.TAlignLayout.Left,0,0,0,0,0,0,0,0,
+                       Restourant.Consts.Strings.OrderNo, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FF000000, 14, [System.UITypes.TFontStyle.fsBold]);
+    FlblOrderNo := TLabel.New(aParentObj,LLayout,LLayout.Height,0,LLayout.Height,200,FMX.Types.TAlignLayout.Client,0,0,0,0,0,0,0,0,
+                       System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FF000000, 14, [System.UITypes.TFontStyle.fsBold]);
+  LLayout   := TLayout.New(aParentObj,FbgrOrder,0,22,20,200,FMX.Types.TAlignLayout.Top,0,2,0,0,0,0,0,0);
+    LLabel  := TLabel.New(aParentObj,LLayout,0,0,LLayout.Height,96,FMX.Types.TAlignLayout.Left,0,0,0,0,0,0,0,0,
+                       Restourant.Consts.Strings.OrderDate, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FF000000, 14, [System.UITypes.TFontStyle.fsBold]);
+    FedtOrderDate := TDateEdit.New(aParentObj,LLayout,LLayout.Height,0,LLayout.Height,200,FMX.Types.TAlignLayout.Client,0,0,0,0,0,0,0,0,
+                       System.SysUtils.Now, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FF000000, 14, [System.UITypes.TFontStyle.fsBold]);
+  LLayout   := TLayout.New(aParentObj,FbgrOrder,0,62,20,200,FMX.Types.TAlignLayout.Top,0,2,0,0,0,0,0,0);
+    FlblOrderHdrImg   := TLabel.NewBG(aParentObj,LLayout,   0,0,LLayout.Height,68,FMX.Types.TAlignLayout.Left,0,0,0,0,0,0,0,0,
+                           Restourant.Consts.Strings.OrderDataImg, FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 12, [System.UITypes.TFontStyle.fsBold], ColorMaterial(0), $FFFFFFFF, LBackgr);
+    FlblOrderHdrTmc   := TLabel.NewBG(aParentObj,LLayout,  66,0,LLayout.Height,64,FMX.Types.TAlignLayout.Client,0,0,0,0,0,0,0,0,
+                           Restourant.Consts.Strings.OrderDataName, FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 12, [System.UITypes.TFontStyle.fsBold], ColorMaterial(0), $FFFFFFFF, LBackgr);
+    FlblOrderHdrPrice := TLabel.NewBG(aParentObj,LLayout, 800,0,LLayout.Height,48,FMX.Types.TAlignLayout.Right,0,0,0,0,0,0,0,0,
+                           Restourant.Consts.Strings.OrderDataPrice, FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 12, [], ColorMaterial(0), $FFFFFFFF, LBackgr);
+    FlblOrderHdrQuant := TLabel.NewBG(aParentObj,LLayout,1200,0,LLayout.Height,32,FMX.Types.TAlignLayout.Right,0,0,0,0,0,0,0,0,
+                           Restourant.Consts.Strings.OrderDataQuant, FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 12, [], ColorMaterial(0), $FFFFFFFF, LBackgr);
+    FlblOrderHdrTotal := TLabel.NewBG(aParentObj,LLayout,1600,0,LLayout.Height,72,FMX.Types.TAlignLayout.Right,0,0,24,0,0,0,0,0,
+                           Restourant.Consts.Strings.OrderDataTotal, FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 12, [], ColorMaterial(0), $FFFFFFFF,LBackgr);
+
+  FlbxOrder := TListBox.New(aParentObj,FbgrOrder,0,82, 32,200,FMX.Types.TAlignLayout.Client,0,0,0,0,0,0,0,0, FMX.ListBox.TListStyle.Vertical);
+
+  LLayout   := TLayout.New(aParentObj,FbgrOrder,0,600, 24,200,FMX.Types.TAlignLayout.Bottom,0,2,0,0,0,0,0,0);
+    FlblOrderFtrTmc   := TLabel.NewBG(aParentObj,LLayout,0,0,LLayout.Height,64,FMX.Types.TAlignLayout.Client,0,0,0,0,0,0,0,0,
+                           Restourant.Consts.Strings.OrderTotal, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 14, [System.UITypes.TFontStyle.fsBold], ColorMaterial(0), $FFFFFFFF, LBackgr);
+    FlblOrderFtrTotal := TLabel.NewBG(aParentObj,LLayout,160,0,LLayout.Height,96,FMX.Types.TAlignLayout.Right,0,0,24,0,0,0,8,0,
+                           System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 14, [System.UITypes.TFontStyle.fsBold], ColorMaterial(0), $FFFFFFFF, LBackgr);
+
+  LLayout   := TLayout.New(aParentObj,FbgrOrder,0,800, 24,200,FMX.Types.TAlignLayout.Bottom,0,2,0,0,0,0,0,0);
+    FlblOrderName := TLabel.New(aParentObj,LLayout,0,0,LLayout.Height,96,FMX.Types.TAlignLayout.Left,0,0,0,0,0,0,0,0,
+                       Restourant.Consts.Strings.OrderName, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FF000000, 14, [System.UITypes.TFontStyle.fsBold]);
+    FedtOrderName := TEdit.New(aParentObj,LLayout,LLayout.Height,0,LLayout.Height,200,FMX.Types.TAlignLayout.Client,0,0,0,0,0,0,0,0,
+                       System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FF000000, 14, [System.UITypes.TFontStyle.fsBold]);
+    FedtOrderName.OnChange := DoChangeOrderName;
+
+  LBgr := TRectangle.New(aParentObj, FbgrOrder,0,1200,32,200,FMX.Types.TAlignLayout.Bottom,0,2,0,0,0,0,0,0, ColorMaterial(0), ColorMaterial(0));
+    FbtnOrderSend := TButton.New(aParentObj, LBgr, 0, 0, LLayout.Height, 200, FMX.Types.TAlignLayout.Client,0,0,0,0,0,0,0,0,
+                Restourant.Consts.Strings.btnOrderSend, FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Center, {$IFDEF ANDROID}$FFFFFFFF{$ELSE}$FF000000{$ENDIF}, 18, [System.UITypes.TFontStyle.fsBold]);
+    FbtnOrderSend.OnClick := DoClickOrderSend;
+end;
+
+procedure TFormMain.CreateControlsTMCVer(aParentObj :TFMXObject);
+var
+  LLayoutQuant :TLayout;
+begin
+  FVbgrTMC        := TRectangle.New(aParentObj,aParentObj    ,0,  0,  0,  0,FMX.Types.TAlignLayout.Client,0,0,0,0,16,16,16,16, ColorMaterial(0), ColorMaterial(0));
+  FVimgTMC        := TImage.New    (aParentObj,FVbgrTMC      ,0,  0,220,330,FMX.Types.TAlignLayout.Top   ,0,0,0,0, 0, 0, 0, 0, FMX.Objects.TImageWrapMode.Stretch);
+  FVlblTMC_NAME   := TLabel.New    (aParentObj,FVbgrTMC      ,0,222, 48,200,FMX.Types.TAlignLayout.Top   ,0,0,0,0,0,0,0,0,
+                       System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 18, [System.UITypes.TFontStyle.fsBold]);
+  FVlblTMC_COMENT := TLabel.New    (aParentObj,FVbgrTMC      ,0,272,140,200,FMX.Types.TAlignLayout.Top   ,0,0,0,0,0,0,0,0,
+                       System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 12, []);
+  FVlblTMC_PRICE  := TLabel.New    (aParentObj,FVbgrTMC      ,0,434, 28,200,FMX.Types.TAlignLayout.Top   ,0,0,0,0,0,0,0,0,
+                       Restourant.Consts.Strings.TmcPrice, FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 24, [System.UITypes.TFontStyle.fsBold]);
+  FVlblTMC_EDIZM  := TLabel.New    (aParentObj,FVlblTMC_PRICE,0,  0, 20,160,FMX.Types.TAlignLayout.Top   ,0,0,0,0,0,0,0,0,
+                       Restourant.Consts.Strings.TmcEdizm, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 14, [System.UITypes.TFontStyle.fsBold]);
+
+  LLayoutQuant    := TLayout.New   (aParentObj,FVbgrTMC      ,0,999, 48,200,FMX.Types.TAlignLayout.Top   ,0,0,0,0,0,8,0,8);
+  FVbtnPlus  := CreateRectButton(LLayoutQuant, 96, FMX.Types.TAlignLayout.Left ,'Добавить', 'PLUS' , DoClickTmcPlus);
+  FVlblQuant := TLabel.New(LLayoutQuant,LLayoutQuant,FVbtnPlus.Width,0, LLayoutQuant.Height,LLayoutQuant.Height,FMX.Types.TAlignLayout.Client,0,0,8,0,0,0,0,0,
+                       System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Center, $FFFFFFFF, 20, [System.UITypes.TFontStyle.fsBold]);
+  FVbtnMinus := CreateRectButton(LLayoutQuant, 96, FMX.Types.TAlignLayout.Right,'Удалить' , 'MINUS', DoClickTmcMinus);
+end;
+
+procedure TFormMain.CreateControlsTMCHor(aParentObj :TFMXObject);
+var
+  LLayout      :TLayout;
+  LLayoutQuant :TLayout;
+begin
+  FHbgrTMC        := TRectangle.New(aParentObj,aParentObj    ,0,  0,  0,  0,FMX.Types.TAlignLayout.Client,0,0,0,0,16,16,16,16, ColorMaterial(0), ColorMaterial(0));
+  FHimgTMC        := TImage.New    (aParentObj,FHbgrTMC      ,0,  0,220,330,FMX.Types.TAlignLayout.Left  ,0,0,0,0, 0, 0, 0, 0, FMX.Objects.TImageWrapMode.Stretch);
+  LLayout         := TLayout.New   (aParentObj,FHbgrTMC      ,0,  0,220,200,FMX.Types.TAlignLayout.Client,0,0,0,0,16, 0, 0, 0);
+  FHlblTMC_NAME   := TLabel.New    (aParentObj,LLayout       ,0,  0, 48,200,FMX.Types.TAlignLayout.Top   ,0,0,0,0,0,0,0,0,
+                       System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 18, [System.UITypes.TFontStyle.fsBold]);
+  FHlblTMC_COMENT := TLabel.New    (aParentObj,LLayout       ,0, 50,192,200,FMX.Types.TAlignLayout.Top   ,0,0,0,0,0,0,0,0,
+                       System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 12, []);
+  FHlblTMC_PRICE  := TLabel.New    (aParentObj,LLayout       ,0,144, 28,200,FMX.Types.TAlignLayout.Top   ,0,0,0,0,0,0,0,0,
+                       Restourant.Consts.Strings.TmcPrice, FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 24, [System.UITypes.TFontStyle.fsBold]);
+  FHlblTMC_EDIZM  := TLabel.New    (aParentObj,FHlblTMC_PRICE,0,  0, 20,160,FMX.Types.TAlignLayout.Top   ,0,0,0,0,0,0,0,0,
+                       Restourant.Consts.Strings.TmcEdizm, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 14, [System.UITypes.TFontStyle.fsBold]);
+
+  LLayoutQuant    := TLayout.New   (aParentObj,LLayout       ,0,999, 48,200,FMX.Types.TAlignLayout.Top   ,0,0,0,0,0,8,0,8);
+  FHbtnPlus  := CreateRectButton(LLayoutQuant, 96, FMX.Types.TAlignLayout.Left ,'Добавить', 'PLUS' , DoClickTmcPlus);
+  FHlblQuant := TLabel.New(LLayoutQuant,LLayoutQuant,FHbtnPlus.Width,0, LLayoutQuant.Height,LLayoutQuant.Height,FMX.Types.TAlignLayout.Client,0,0,8,0,0,0,0,0,
+                       System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Center, $FFFFFFFF, 20, [System.UITypes.TFontStyle.fsBold]);
+  FHbtnMinus := CreateRectButton(LLayoutQuant, 96, FMX.Types.TAlignLayout.Right,'Удалить' , 'MINUS', DoClickTmcMinus);
 end;
 
 function TFormMain.CanBack: Boolean;
 begin
-  Result := False;
+  Result := True;
   if(FtcMain.ActiveTab = FtiMainMenu)then
     Result := (FtcMenu.ActiveTab <> FtiMenuCat);
 end;
@@ -784,13 +1256,21 @@ end;
 procedure TFormMain.DoBack;
 begin
   if(FtcMain.ActiveTab = FtiMainMenu)then
+  begin
+    if(FtcMenu.ActiveTab = FtiMenuTMC  )then FillList  (FtiMenuList.HelpKeyword.ToInteger);
+    if(FtcMenu.ActiveTab = FtiMenuList )then FillGroups(FtiMenuGroup.HelpKeyword.ToInteger);
     FtcMenu.Previous;
+  end
+  else
+  begin
+    FtcMain.ActiveTab := FtiMainMenu;
+  end;
 end;
 
 procedure TFormMain.KeyUp(var Key: Word; var KeyChar: System.WideChar; Shift: TShiftState);
 begin
   inherited KeyUp(Key, KeyChar, Shift);
-  if(Key = vkHardwareBack)then
+  if( (Key = vkHardwareBack) or (Key = vkBack) )then
   begin
     if CanBack then
     begin
@@ -803,70 +1283,120 @@ end;
 procedure TFormMain.Resize;
 begin
   inherited Resize;
+  FbgrUser.Width       := FsbUser.Width - 28;
+  FbgrUser.Height      := System.Math.Max(FsbUser.Height * 2, 400);
   FlbxCategory.Columns := Trunc(Width / 240);
   FlbxGroup.Columns    := Trunc(Width / 240);
-  FlbxTMC.Columns      := Trunc(Width / 330);
+  FlbxList.Columns     := Trunc(Width / 330);
   if(Height > Width)then
   begin
-    FVimgTMC_IMAGE.Height := Trunc(Width * 2 / 3);
+    FVimgTMC.Height  := Width * 2 / 3;
     FtcTMC.ActiveTab := FtiTMCV;
   end
   else
   begin
-    FHimgTMC_IMAGE.Width  := Trunc( ( Height - (FTopBar.Height + 16)*2 ) * 3 / 2);
+    FHimgTMC.Width   := ( Height - (FTopBar.Height + 16)*2 ) * 3 / 2;
     FtcTMC.ActiveTab := FtiTMCH;
   end;
+end;
+
+procedure TFormMain.DoChangeOrderName(Sender: TObject);
+begin
+  FOrderCurr.S[Restourant.Consts.UserData.FieldOrderNAME] := TEdit(Sender).Text;
 end;
 
 procedure TFormMain.DoChangeTabControl(Sender: TObject);
 begin
   FTopBtnBack.Visible     := CanBack;
-  FTopBtnMenu.Fill.Color  := GetTopBarButtonColor(FtcMain.ActiveTab = FtiMainMenu );
-  FTopBtnOrder.Fill.Color := GetTopBarButtonColor(FtcMain.ActiveTab = FtiMainOrder);
-  FTopBtnUser.Fill.Color  := GetTopBarButtonColor(FtcMain.ActiveTab = FtiMainUser );
+  FTopBtnMenu.Fill.Color  := ColorButtonTopBar(FtcMain.ActiveTab = FtiMainMenu );
+  FTopBtnOrder.Fill.Color := ColorButtonTopBar(FtcMain.ActiveTab = FtiMainOrder);
+  FTopBtnUser.Fill.Color  := ColorButtonTopBar(FtcMain.ActiveTab = FtiMainUser );
 end;
 
-procedure TFormMain.DoClick_Category(Sender: TObject);
+procedure TFormMain.DoClickCategory(Sender: TObject);
 begin
-  FillGroups( TFMXObject(Sender).Tag );
+  FillGroups( TComponent(Sender).Tag );
   FtcMenu.ActiveTab := FtiMenuGroup;
 end;
 
-procedure TFormMain.DoClick_Group(Sender: TObject);
+procedure TFormMain.DoClickGroup(Sender: TObject);
 begin
-  FillTMC( TFMXObject(Sender).Tag );
+  FillList( TComponent(Sender).Tag );
   FtcMenu.ActiveTab := FtiMenuList;
 end;
 
-procedure TFormMain.DoClick_TMC(Sender: TObject);
+procedure TFormMain.DoClickLang(Sender: TObject);
+var
+  LLang :Restourant.Consts.Strings.TLang;
 begin
-  FillCard( TFMXObject(Sender).Tag, TFMXObject(Sender).TagString.ToInteger() );
+  FLang := IntToTLang( TComponent(Sender).Tag );
+  for LLang := High(Restourant.Consts.Strings.TLang) downto Low(Restourant.Consts.Strings.TLang) do
+    FTopBtnLang[LLang].Fill.Color := ColorButtonTopBar(LLang = FLang);
+  FUDB.Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserLang] := TLangToInt(FLang).ToString;
+  FUDB.Flush( Restourant.Consts.UserData.PROFILE );
+  DoLangChange;
+end;
+
+procedure TFormMain.DoClickList(Sender: TObject);
+begin
+  FillCard( TComponent(Sender).Tag, TFMXObject(Sender).TagString.ToInteger() );
+  FtcMain.ActiveTab := FtiMainMenu;
   FtcMenu.ActiveTab := FtiMenuTMC;
 end;
 
-procedure TFormMain.DoListItemMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+procedure TFormMain.DoClickOrder(Sender: TObject);
+begin
+  FillOrder( UserBaseOrderById(TComponent(Sender).Tag) );
+  FtcOrder.ActiveTab := FtiOrder;
+end;
+
+procedure TFormMain.DoClickTmcMinus(Sender: TObject);
+begin
+  UserBaseOrderMinus(TComponent(Sender).Tag);
+  FHlblQuant.Text := UserBaseOrderQntGet(TComponent(Sender).Tag).ToString;
+  FVlblQuant.Text := FHlblQuant.Text;
+end;
+
+procedure TFormMain.DoClickTmcPlus(Sender: TObject);
+begin
+  UserBaseOrderPlus(TComponent(Sender).Tag);
+  FHlblQuant.Text := UserBaseOrderQntGet(TComponent(Sender).Tag).ToString;
+  FVlblQuant.Text := FHlblQuant.Text;
+end;
+
+procedure TFormMain.DoMouseDownListItem(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
 begin
   with TRectangle(TFMXObject(Sender).TagObject)do
     Fill.Color := Fill.Color - $A0000000;
 end;
 
-procedure TFormMain.DoListItemMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+procedure TFormMain.DoMouseUpListItem(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
 begin
   with TRectangle(TFMXObject(Sender).TagObject)do
     Fill.Color := Fill.Color + $A0000000;
 end;
 
-procedure TFormMain.DoTopButtonMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+procedure TFormMain.DoMouseDownTopBtn(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
 begin
-  TRectangle(TComponent(Sender).Owner).Fill.Color := $FF000000;
+  TRectangle(Sender).Fill.Color := $FF000000;
 end;
 
-procedure TFormMain.DoTopButtonMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+procedure TFormMain.DoMouseUpTopBtn(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
 begin
-  TRectangle(TComponent(Sender).Owner).Fill.Color := FTopBar.Fill.Color;
+  TRectangle(Sender).Fill.Color := FTopBar.Fill.Color;
 end;
 
-procedure TFormMain.FillCategories;
+procedure TFormMain.DoMouseDownBtn(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+begin
+  TRectangle(Sender).Fill.Color := $FF000000;
+end;
+
+procedure TFormMain.DoMouseUpBtn(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+begin
+  TRectangle(Sender).Fill.Color := $FFFFFFFF;
+end;
+
+procedure TFormMain.FillCat;
 var
   LRow     :TJsonObject;
   LItem    :TListBoxItem;
@@ -875,59 +1405,16 @@ var
   i, j     :Integer;
 begin
   FlbxCategory.Clear;
-  FlbxCategory.ItemHeight := 96;
+  FlbxCategory.ItemHeight := 80;
   j := 1;
   for i:=0 to FDB[Restourant.Consts.Database.R_TMC_CTGR].A[Restourant.Consts.Database.Section].Count-1 do
   begin
     LRow := FDB[Restourant.Consts.Database.R_TMC_CTGR].A[Restourant.Consts.Database.Section].O[i];
     if(LRow.S['FLAG_DELETE'] = '0')then
     begin
-      LItem := TListBoxItem.Create(FlbxCategory);
-      with LItem do
-      begin
-        Parent          := FlbxCategory;
-        Height          := FlbxCategory.ItemHeight;
-        Tag             := LRow.S['ID'].ToInteger();
-        TagString       := MaterialColor(j).ToString();
-        OnClick         := DoClick_Category;
-        OnMouseDown     := DoListItemMouseDown;
-        OnMouseUp       := DoListItemMouseUp;
-      end;
-      LBackgr := TRectangle.Create(LItem);
-      with LBackgr do
-      begin
-        Parent          := LItem;
-        HitTest         := False;
-        Position.X      := 0;
-        Position.Y      := 0;
-        Height          := LItem.Height;
-        Align           := FMX.Types.TAlignLayout.Client;
-        Fill.Color      := LItem.TagString.ToInteger();
-        Fill.Kind       := FMX.Graphics.TBrushKind.Solid;
-        Stroke.Color    := LBackgr.Fill.Color;
-        Stroke.Kind     := FMX.Graphics.TBrushKind.None;
-        Margins.Left    := 8;
-        Margins.Top     := 8;
-        Margins.Right   := 8;
-        Margins.Bottom  := 0;
-      end;
-      LItem.TagObject := LBackgr;
-      LLblName := TLabel.Create(LItem);
-      with LLblName do
-      begin
-        Parent          := LBackgr;
-        StyledSettings  := [];
-        AutoSize        := False;
-        Position.Y      := 0;
-        Height          := LItem.Height;
-        Align           := FMX.Types.TAlignLayout.Client;
-        WordWrap        := False;
-        Text            := LRow.S['NAME'];
-        Font.Size       := 28;
-        Font.Style      := [System.UITypes.TFontStyle.fsBold];
-        FontColor       := $FFFFFFFF;
-        TextSettings.HorzAlign := FMX.Types.TTextAlign.Center;
-      end;
+      LItem    := CreateListBoxItem(FlbxCategory, FlbxCategory.ItemHeight, 0, LRow.S['ID'].ToInteger(), j, DoClickCategory, nil, LBackgr);
+      LLblName := TLabel.New(LItem,LBackgr,0,0,LItem.Height,200,FMX.Types.TAlignLayout.Client, 0,0,0,0,0,0,0,0,
+                      LRow.S['NAME'], FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Center, $FFFFFFFF, 24, [System.UITypes.TFontStyle.fsBold]);
       j := j + 1;
     end;
   end;
@@ -942,10 +1429,12 @@ var
   LCategory:string;
   i, j     :Integer;
 begin
-  FlbxGroup.Clear;
-  FlbxGroup.ItemHeight := 60;
+  FtiMenuGroup.HelpKeyword := TMC_CTGR_ID.ToString;
 
-  LCategory := '';
+  FlbxGroup.Clear;
+  FlbxGroup.ItemHeight := 48;
+
+  LCategory := System.SysUtils.EmptyStr;
   for i:=0 to FDB[Restourant.Consts.Database.R_TMC_CTGR].A[Restourant.Consts.Database.Section].Count-1 do
   begin
     LRow := FDB[Restourant.Consts.Database.R_TMC_CTGR].A[Restourant.Consts.Database.Section].O[i];
@@ -955,61 +1444,27 @@ begin
       Break;
     end;
   end;
-
   j := 1;
   for i:=0 to FDB[Restourant.Consts.Database.R_TMC_GROUPSHARE].A[Restourant.Consts.Database.Section].Count-1 do
   begin
     LRow := FDB[Restourant.Consts.Database.R_TMC_GROUPSHARE].A[Restourant.Consts.Database.Section].O[i];
     if( (LRow.S['GROUPNAME'] = LCategory) and (LRow.S['FLAG_DELETE'] = '0') )then
     begin
-      LItem                   := TListBoxItem.Create(FlbxGroup);
-      LItem.Parent            := FlbxGroup;
-      LItem.Height            := FlbxGroup.ItemHeight;
-      LItem.Tag               := LRow.S['TMC_GROUP_ID'].ToInteger();
-      LItem.TagString         := MaterialColor(j).ToString();
-      LItem.OnClick           := DoClick_Group;
-      LItem.OnMouseDown       := DoListItemMouseDown;
-      LItem.OnMouseUp         := DoListItemMouseUp;
-      LBackgr                 := TRectangle.Create(LItem);
-      LBackgr.Parent          := LItem;
-      LBackgr.HitTest         := False;
-      LBackgr.Position.X      := 0;
-      LBackgr.Position.Y      := 0;
-      LBackgr.Height          := LItem.Height;
-      LBackgr.Align           := FMX.Types.TAlignLayout.Client;
-      LBackgr.Fill.Color      := LItem.TagString.ToInteger();
-      LBackgr.Fill.Kind       := FMX.Graphics.TBrushKind.Solid;
-      LBackgr.Stroke.Color    := LBackgr.Fill.Color;
-      LBackgr.Stroke.Kind     := FMX.Graphics.TBrushKind.None;
-      LBackgr.Margins.Left    := 8;
-      LBackgr.Margins.Top     := 8;
-      LBackgr.Margins.Right   := 8;
-      LBackgr.Margins.Bottom  := 0;
-      LItem.TagObject         := LBackgr;
-      LLblName                := TLabel.Create(LItem);
-      LLblName.Parent         := LBackgr;
-      LLblName.StyledSettings := [];
-      LLblName.AutoSize       := False;
-      LLblName.Position.Y     := 0;
-      LLblName.Height         := LItem.Height;
-      LLblName.Align          := FMX.Types.TAlignLayout.Client;
-      LLblName.WordWrap       := False;
-      LLblName.Text           := LRow.S['NAME'];
-      LLblName.Font.Size      := 20;
-      LLblName.Font.Style     := [System.UITypes.TFontStyle.fsBold];
-      LLblName.FontColor      := $FFFFFFFF;
-      LLblName.TextSettings.HorzAlign := FMX.Types.TTextAlign.Center;
+      LItem    := CreateListBoxItem(FlbxGroup, FlbxGroup.ItemHeight, 0, LRow.S['TMC_GROUP_ID'].ToInteger(), j, DoClickGroup, nil, LBackgr);
+      LLblName := TLabel.New(LItem,LBackgr,0,0,LItem.Height,200,FMX.Types.TAlignLayout.Client, 0,0,0,0,0,0,0,0,
+                      LRow.S['NAME'], FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Center, $FFFFFFFF, 18, [System.UITypes.TFontStyle.fsBold]);
       j := j + 1;
     end;
   end
 end;
 
-procedure TFormMain.FillTMC(const TMC_GROUP_ID:Integer);
+procedure TFormMain.FillList(const TMC_GROUP_ID:Integer);
 var
   LRow         :TJsonObject;
   LItem        :TListBoxItem;
   LBackgr      :TRectangle;
   LImage       :TImage;
+  LImagePlus   :TImage;
   LLblName     :TLabel;
   LLblComent   :TLabel;
   LLblEdzim    :TLabel;
@@ -1017,10 +1472,12 @@ var
   LComent      :string;
   i, j         :Integer;
 begin
-  FlbxTMC.Clear;
-  FlbxTMC.Columns    := Trunc(Width / 330);
-  FlbxTMC.ItemHeight := 344;
-  FlbxTMC.ItemWidth  := 332;
+  FtiMenuList.HelpKeyword := TMC_GROUP_ID.ToString;
+
+  FlbxList.Clear;
+  FlbxList.Columns    := Trunc(Width / 330);
+  FlbxList.ItemHeight := 344;
+  FlbxList.ItemWidth  := System.Math.Min(332, Self.Width - 32);
   j := 1;
   for i:=0 to FDB[Restourant.Consts.Database.R_TMC].A[Restourant.Consts.Database.Section].Count-1 do
   begin
@@ -1030,155 +1487,357 @@ begin
       LComent := LRow.S['COMENT'];
       if(LComent.Length > 80)then
         LComent := Copy(LComent, 0, 80) + '...';
-      LItem                     := TListBoxItem.Create(Self);
-      LItem.Parent              := FlbxTMC;
-      LItem.Height              := FlbxTMC.ItemHeight;
-      LItem.Width               := FlbxTMC.ItemWidth;
-      LItem.Tag                 := LRow.S['ID'].ToInteger();
-      LItem.TagString           := MaterialColor(j).ToString();
-      LItem.OnClick             := DoClick_TMC;
-      LItem.OnMouseDown         := DoListItemMouseDown;
-      LItem.OnMouseUp           := DoListItemMouseUp;
-      LBackgr                   := TRectangle.Create(LItem);
-      LBackgr.Parent            := LItem;
-      LBackgr.HitTest           := False;
-      LBackgr.Position.X        := 0;
-      LBackgr.Position.Y        := 0;
-      LBackgr.Height            := LItem.Height;
-      LBackgr.Width             := LItem.Width;
-      LBackgr.Align             := FMX.Types.TAlignLayout.Client;
-      LBackgr.Fill.Color        := LItem.TagString.ToInteger();
-      LBackgr.Fill.Kind         := FMX.Graphics.TBrushKind.Solid;
-      LBackgr.Stroke.Color      := LBackgr.Fill.Color;
-      LBackgr.Stroke.Kind       := FMX.Graphics.TBrushKind.None;
-      LBackgr.Margins.Left      := 8;
-      LBackgr.Margins.Top       := 8;
-      LBackgr.Margins.Right     := 8;
-      LBackgr.Margins.Bottom    := 8;
-      LBackgr.Padding.Left      := 16;
-      LBackgr.Padding.Top       := 16;
-      LBackgr.Padding.Right     := 16;
-      LBackgr.Padding.Bottom    := 16;
-      LItem.TagObject           := LBackgr;
-
-      LImage                    := TImage.Create(LItem);
-      LImage.Parent             := LBackgr;
-      LImage.Height             := 220;
-      LImage.Align              := FMX.Types.TAlignLayout.Top;
-      LImage.WrapMode           := FMX.Objects.TImageWrapMode.Stretch;
-      LImage.Tag                := LItem.Tag;
-      LImage.TagString          := LItem.TagString;
-      LImage.OnClick            := DoClick_TMC;
+      LItem  := CreateListBoxItem(FlbxList, FlbxList.ItemHeight, FlbxList.ItemWidth, LRow.S['ID'].ToInteger(), j, nil, DoClickList, LBackgr);
+      LBackgr.Padding.Left   := 8;
+      LBackgr.Padding.Top    := 8;
+      LBackgr.Padding.Right  := 8;
+      LBackgr.Padding.Bottom := 8;
+      LImage := TImage.New(LItem,LBackgr,0,0,220,200,FMX.Types.TAlignLayout.Top,0,0,0,0,0,0,0,0,FMX.Objects.TImageWrapMode.Stretch);
+      LImage.HitTest   := True;
+      LImage.Tag       := LItem.Tag;
+      LImage.TagString := LItem.TagString;
+      LImage.OnClick   := DoClickList;
       try
-        LImage.Bitmap.LoadFromFile( GetTMCImage(LRow.S['ID'].ToInteger()) );
+        LImage.Bitmap.LoadFromFile( ImageFileNameTMC(LRow.S['ID'].ToInteger()) );
       except
-        LImage.Bitmap.LoadFromFile( GetTMCImage(0) );
+        LImage.Bitmap.LoadFromFile( ImageFileNameTMC(0) );
       end;
-      LLblName                  := TLabel.Create(LItem);
-      LLblName.Parent           := LBackgr;
-      LLblName.StyledSettings   := [];
-      LLblName.AutoSize         := False;
-      LLblName.Position.Y       := LImage.Height + 2;
-      LLblName.Height           := 20;
-      LLblName.Align            := FMX.Types.TAlignLayout.Top;
-      LLblName.WordWrap         := False;
-      LLblName.Text             := LRow.S['NAME'];
-      LLblName.Font.Size        := 16;
-      LLblName.Font.Style       := [System.UITypes.TFontStyle.fsBold];
-      LLblName.FontColor        := $FFFFFFFF;
-      LLblName.TextAlign        := FMX.Types.TTextAlign.Leading;
-      LLblName.VertTextAlign    := FMX.Types.TTextAlign.Leading;
-
-      LLblComent                := TLabel.Create(LItem);
-      LLblComent.Parent         := LBackgr;
-      LLblComent.StyledSettings := [];
-      LLblComent.AutoSize       := False;
-      LLblComent.Position.Y     := LLblName.Position.Y + LLblName.Height + 2;
-      LLblComent.Height         := 32;
-      LLblComent.Align          := FMX.Types.TAlignLayout.Top;
-      LLblComent.WordWrap       := True;
-      LLblComent.Text           := LComent;
-      LLblComent.Font.Size      := 10;
-      LLblComent.Font.Style     := [];
-      LLblComent.FontColor      := $FFFFFFFF;
-      LLblComent.TextAlign      := FMX.Types.TTextAlign.Leading;
-      LLblComent.VertTextAlign  := FMX.Types.TTextAlign.Leading;
-
-      LLblPrice                 := TLabel.Create(LItem);
-      LLblPrice.Parent          := LBackgr;
-      LLblPrice.StyledSettings  := [];
-      LLblPrice.AutoSize        := False;
-      LLblPrice.Position.Y      := LLblComent.Position.Y + LLblComent.Height;
-      LLblPrice.Height          := 48;
-      LLblPrice.Align           := FMX.Types.TAlignLayout.Top;
-      LLblPrice.WordWrap        := True;
-      LLblPrice.Text            := Restourant.Consts.Strings.TmcPrice + ' ' + FormatFloat('# ### ##0.00', SafeFloat(LRow.S['PRICE']) );
-      LLblPrice.Font.Size       := 24;
-      LLblPrice.Font.Style      := [System.UITypes.TFontStyle.fsBold];
-      LLblPrice.FontColor       := $FFFFFFFF;
-      LLblPrice.TextAlign       := FMX.Types.TTextAlign.Trailing;
-      LLblPrice.VertTextAlign   := FMX.Types.TTextAlign.Leading;
-
-      LLblEdzim                 := TLabel.Create(LItem);
-      LLblEdzim.Parent          := LLblPrice;
-      LLblEdzim.StyledSettings  := [];
-      LLblEdzim.AutoSize        := False;
-      LLblEdzim.Position.X      := 0;
-      LLblEdzim.Position.Y      := 0;
-      LLblEdzim.Height          := 20;
-      LLblEdzim.Width           := 160;
-      LLblEdzim.Align           := FMX.Types.TAlignLayout.Left;
-      LLblEdzim.Text            := Restourant.Consts.Strings.TmcEdizm + ' ' + LRow.S['EDIZM_SNAME'];
-      LLblEdzim.Font.Size       := 14;
-      LLblEdzim.Font.Style      := [System.UITypes.TFontStyle.fsBold];
-      LLblEdzim.FontColor       := $FFFFFFFF;
-      LLblEdzim.TextAlign       := FMX.Types.TTextAlign.Leading;
-      LLblEdzim.VertTextAlign   := FMX.Types.TTextAlign.Leading;
+      LImagePlus := TImage.New(LImage,LImage,0,0,32,32,FMX.Types.TAlignLayout.None,0,0,0,0,0,0,0,0,FMX.Objects.TImageWrapMode.Stretch);
+      ImageLoadFromResource(LImagePlus.Bitmap, 'PLUSCORNER');
+      LLblName   := TLabel.New(LItem,LBackgr,0,221,36,200,FMX.Types.TAlignLayout.Top, 0,0,0,0,0,0,0,0,
+                      LRow.S['NAME'], FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 16, [System.UITypes.TFontStyle.fsBold]);
+      LLblComent := TLabel.New(LItem,LBackgr,0,261,32,200,FMX.Types.TAlignLayout.Top, 0,0,0,0,0,0,0,0,
+                      LComent, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 10, []);
+      LLblPrice  := TLabel.New(LItem,LBackgr,0,293,48,200,FMX.Types.TAlignLayout.Top, 0,0,0,0,0,0,0,0,
+                      Restourant.Consts.Strings.TmcPrice + ' ' + FormatFloat('# ### ##0.00', SafeFloat(LRow.S['PRICE']) ), FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 24, [System.UITypes.TFontStyle.fsBold]);
+      LLblEdzim  := TLabel.New(LItem,LLblPrice,0,0,20,160,FMX.Types.TAlignLayout.Left, 0,0,0,0,0,0,0,0,
+                      Restourant.Consts.Strings.TmcEdizm + ' ' + LRow.S['EDIZM_SNAME'], FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 14, [System.UITypes.TFontStyle.fsBold]);
       j := j + 1;
     end;
   end;
-  if(FlbxTMC.Count > 0)then
-    FlbxTMC.ItemIndex := 0;
+  if(FlbxList.Count > 0)then
+    FlbxList.ItemIndex := 0;
 end;
 
-procedure TFormMain.FillCard(const TMC_ID, aColor: Integer);
+procedure TFormMain.FillOrder(anOrder:TJsonObject);
+var
+  LCounter :Integer;
+  LItem    :TListBoxItem;
+  LImage   :TImage;
+  LLabel   :TLabel;
+  LLabelH  :TLabel;
+  LBackgr  :TRectangle;
+begin
+  FedtOrderName.OnChange := nil;
+  FedtOrderName.Text     := anOrder.S[Restourant.Consts.UserData.FieldOrderNAME];
+  FedtOrderDate.Date     := anOrder.D[Restourant.Consts.UserData.FieldOrderDATE_CREATE];
+  FlblOrderFtrTotal.Text := FormatFloat('# ### ##0.00', anOrder.F[Restourant.Consts.UserData.FieldOrderDOCSUM]);
+  if(anOrder.S[Restourant.Consts.UserData.FieldOrderDOCNUMBERSTR] = System.SysUtils.EmptyStr)then
+  begin
+    FlblOrderNo.Text       := Restourant.Consts.Strings.OrderNoNotExists;
+    FbtnOrderSend.Text     := Restourant.Consts.Strings.btnOrderSend;
+    FbtnOrderSend.Enabled  := True;
+    FedtOrderDate.Enabled  := True;
+    FedtOrderName.Enabled  := True;
+    FedtOrderName.OnChange := DoChangeOrderName;
+  end
+  else
+  begin
+    FlblOrderNo.Text      := anOrder.S[Restourant.Consts.UserData.FieldOrderDOCNUMBERSTR] +
+                               ' ' + Restourant.Consts.Strings.OrderDateFrom + ' ' +
+                               FormatDateTime('dd.mm.yyyy', anOrder.D[Restourant.Consts.UserData.FieldOrderDATE_COMMIT]);
+    FbtnOrderSend.Text    := Restourant.Consts.Strings.btnOrderSendDone;
+    FbtnOrderSend.Enabled := False;
+    FedtOrderDate.Enabled := False;
+    FedtOrderName.Enabled := False;
+  end;
+
+  FlbxOrder.Clear;
+  FlbxOrder.ItemHeight := 44;
+  with anOrder.A[Restourant.Consts.UserData.FieldOrder_DOCUMENT] do
+    for LCounter := 0 to Count-1 do
+    begin
+      LItem := TListBoxItem.Create(FlbxOrder);
+      with LItem do
+      begin
+        Parent          := FlbxOrder;
+        Height          := FlbxOrder.ItemHeight;
+        Tag             := O[LCounter].I[Restourant.Consts.UserData.FieldDocTMC_ID];
+        TagString       := Integer($FF60606F).ToString;
+        Margins.Left    := 0;
+        Margins.Top     := 1;
+        Margins.Right   := 0;
+        Margins.Bottom  := 1;
+      end;
+      LImage := TImage.New(LItem,LItem,0,0,LItem.Height,66, FMX.Types.TAlignLayout.Left, 2,0,2,0,0,0,0,0,TImageWrapMode.Stretch);
+      LImage.Bitmap.LoadFromFile( ImageFileNameTMC( O[LCounter].I[Restourant.Consts.UserData.FieldDocTMC_ID] ) );
+      LLabel := TLabel.New(LItem,LItem,  66,0,LItem.Height,64,FMX.Types.TAlignLayout.Client,0,0,0,0,0,0,0,0,
+                             O[LCounter].S[Restourant.Consts.UserData.FieldDocTMC_NAME] + ' ['+
+                             O[LCounter].S[Restourant.Consts.UserData.FieldDocEDIZM_SNAME] + ']'
+
+                             , FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FF000000, 12, [System.UITypes.TFontStyle.fsBold]);
+
+      LLabelH:= TLabel.New(LLabel,LLabel,0,200,14,200,FMX.Types.TAlignLayout.Bottom,0,0,0,0,0,0,0,0,
+                             OrderDataQuantChange, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FF60606F, 11, []);
+      LLabelH.Font.Family := 'Arial';
+
+      if(anOrder.S[Restourant.Consts.UserData.FieldOrderDOCNUMBERSTR] = System.SysUtils.EmptyStr)then
+      begin
+        LImage.Tag       := O[LCounter].I[Restourant.Consts.UserData.FieldDocTMC_ID];
+        LImage.TagString := Integer($FF60606F).ToString;
+        LImage.OnClick   := DoClickList;
+        LImage.HitTest   := True;
+        LLabel.Tag       := O[LCounter].I[Restourant.Consts.UserData.FieldDocTMC_ID];
+        LLabel.TagString := Integer($FF60606F).ToString;
+        LLabel.OnClick   := DoClickList;
+        LLabel.HitTest   := True;
+      end;
+      LLabel := TLabel.New(LItem,LItem, 800,0,LItem.Height,48,FMX.Types.TAlignLayout.Right,0,0,0,0,0,0,0,0,
+                             FormatFloat('# ### ##0.00', O[LCounter].F[Restourant.Consts.UserData.FieldDocPRICE]), FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Leading, $FF000000, 12, [System.UITypes.TFontStyle.fsBold]);
+      LLabel := TLabel.New(LItem,LItem,2000,0,LItem.Height,32,FMX.Types.TAlignLayout.Right,0,0,0,0,0,0,0,0,
+                             FormatFloat(   '# ### ##0', O[LCounter].F[Restourant.Consts.UserData.FieldDocQUANT]), FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Leading, $FF000000, 12, [System.UITypes.TFontStyle.fsBold]);
+      LLabel := TLabel.New(LItem,LItem,5000,0,LItem.Height,72,FMX.Types.TAlignLayout.Right,0,0,24,0,0,0,0,0,
+                             FormatFloat('# ### ##0.00', O[LCounter].F[Restourant.Consts.UserData.FieldDocTOTAL]), FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Leading, $FF000000, 12, [System.UITypes.TFontStyle.fsBold]);
+    end;
+end;
+
+procedure TFormMain.FillOrders;
+var
+  LRow     :TJsonObject;
+  LItem    :TListBoxItem;
+  LBackgr  :TRectangle;
+  LLblName :TLabel;
+  LText    :string;
+  i        :Integer;
+begin
+  FlbxOrdersList.Clear;
+  FlbxOrdersList.ItemHeight := 48;
+
+  for i:=FUDB.Tables[Restourant.Consts.UserData.ORDERS].Count-1 downto 0 do
+  begin
+    LRow := FUDB.Tables[Restourant.Consts.UserData.ORDERS].Items[i]^.ObjectValue;
+
+    if(LRow.S[Restourant.Consts.UserData.FieldOrderDOCNUMBERSTR] = System.SysUtils.EmptyStr)then
+      LText := Restourant.Consts.Strings.OrderCurrent
+    else
+      LText := LRow.S[Restourant.Consts.UserData.FieldOrderDOCNUMBERSTR] +
+        ' ' + Restourant.Consts.Strings.OrderDateFrom +' ' + FormatDateTime('dd.mm.yyyy', LRow.D[Restourant.Consts.UserData.FieldOrderDATE_COMMIT]) + #13#10+
+        '"' + LRow.S[Restourant.Consts.UserData.FieldOrderNAME] + '"';
+
+    LItem    := CreateListBoxItem(FlbxOrdersList, FlbxOrdersList.ItemHeight, 0, LRow.I[Restourant.Consts.UserData.FieldOrderID], 0, DoClickOrder, nil, LBackgr);
+    LLblName := TLabel.New(LItem,LBackgr,0,0,LItem.Height,200,FMX.Types.TAlignLayout.Client, 0,0,0,0,0,0,0,0,
+                    LText, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 14, []);
+  end;
+end;
+
+procedure TFormMain.FillUser;
+begin
+  UserBaseUserLoad;
+end;
+
+procedure TFormMain.DoClickUserRegister(Sender: TObject);
+var
+  LJSON   :TJsonObject;
+  LStream :TStringStream;
+  LAnswer :string;
+begin
+  if not UserDataUserSave then exit;
+  if not Network.IsConnected then
+  begin
+    ShowMessage(Restourant.Consts.Strings.ErrorInternerNotConnected + #13#10 + Restourant.Consts.Strings.ErrorUserYouShouldToConnect);
+    exit;
+  end;
+  LAnswer := HTTPPostJSON(Restourant.Consts.Filenames.UrlHost, Restourant.Consts.Filenames.UrlUserRegister, FUDB.Tables[Restourant.Consts.UserData.PROFILE].ToJSON(True) );
+  if(not(LAnswer.Length > 0))then
+  begin
+    ShowMessage(Restourant.Consts.Strings.ErrorUserNotRegistered + #13#10 + Restourant.Consts.Strings.ErrorInternetAnswerInvalid);
+    exit;
+  end;
+  LJSON   := TJsonObject.Create;
+  LStream := TStringStream.Create(LAnswer);
+  try
+    try
+      LJSON.LoadFromStream(LStream);
+    except
+      ShowMessage(Restourant.Consts.Strings.ErrorUserNotRegistered + #13#10 + Restourant.Consts.Strings.ErrorInternetAnswerInvalid);
+    end;
+    if(LJSON.Count > 0)then
+    begin
+      if LJSON.Contains( UpperCase('ERROR') ) then
+        ShowMessage(Restourant.Consts.Strings.ErrorUserNotRegistered + #13#10 +
+                    Restourant.Consts.Strings.ErrorInternetAnswer    + #13#10 + LJSON.S['ERROR'] )
+      else
+        if LJSON.Contains( UpperCase('OK') ) then
+        begin
+          with FUDB.Tables[Restourant.Consts.UserData.PROFILE] do
+          begin
+            S[Restourant.Consts.UserData.FieldUserID ] := S[Restourant.Consts.UserData.FieldUserEMAIL ];
+            S[Restourant.Consts.UserData.FieldUserPWD] := S[Restourant.Consts.UserData.FieldUserPWDNEW];
+          end;
+          FUDB.Flush(Restourant.Consts.UserData.PROFILE);
+          FedtUsrID.Enabled := False;
+          ShowMessage(Restourant.Consts.Strings.ErrorUserRegisteredSuccesfully + #13#10 +
+                      Restourant.Consts.Strings.ErrorInternetAnswer            + #13#10 + LJSON.S['OK']);
+        end;
+    end
+    else
+      ShowMessage(Restourant.Consts.Strings.ErrorUserNotRegistered + #13#10 + Restourant.Consts.Strings.ErrorInternetNoAnswer);
+  finally
+    LStream.Free;
+    LJSON.Free;
+  end;
+end;
+
+procedure TFormMain.DoClickOrdersClear(Sender: TObject);
+var
+  LCounter :Integer;
+begin
+  with FUDB.Tables[Restourant.Consts.UserData.ORDERS] do
+  begin
+    LCounter := 0;
+    while(LCounter < Count)do
+    begin
+      if(Items[LCounter]^.ObjectValue.I[Restourant.Consts.UserData.FieldOrderID] <> FOrderCurr.I[Restourant.Consts.UserData.FieldOrderID])then
+        Delete(LCounter)
+      else
+        LCounter := LCounter + 1;
+    end;
+  end;
+  FUDB.Flush(Restourant.Consts.UserData.ORDERS);
+  FillOrders;
+end;
+
+procedure TFormMain.DoClickOrderSend(Sender: TObject);
+var
+  LJSON   :TJsonObject;
+  LStream :TStringStream;
+  LAnswer :string;
+  LOldID  :Integer;
+begin
+  if not Network.IsConnected then
+  begin
+    ShowMessage(Restourant.Consts.Strings.ErrorInternerNotConnected + #13#10 + Restourant.Consts.Strings.ErrorUserYouShouldToConnect);
+    exit;
+  end;
+  with FUDB.Tables[Restourant.Consts.UserData.PROFILE] do
+    if(S[Restourant.Consts.UserData.FieldUserID] = System.SysUtils.EmptyStr)then
+    begin
+      actUserExecute(nil);
+      ShowMessage(Restourant.Consts.Strings.ErrorUserNotRegisteredToOrder);
+      exit;
+    end;
+  if(FOrderCurr.S[Restourant.Consts.UserData.FieldOrderDOCNUMBERSTR] <> System.SysUtils.EmptyStr)then
+  begin
+    ShowMessage(Restourant.Consts.Strings.ErrorOrderWasSend);
+    exit;
+  end;
+  if(FOrderCurr.A[Restourant.Consts.UserData.FieldOrder_DOCUMENT].Count = 0)then
+  begin
+    ShowMessage(Restourant.Consts.Strings.ErrorOrderWasSendNoQuant);
+    exit;
+  end;
+  FOrderCurr.S[Restourant.Consts.UserData.FieldOrderUSER_ID] := FUDB.Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserID];
+
+  LAnswer := HTTPPostJSON(Restourant.Consts.Filenames.UrlHost, Restourant.Consts.Filenames.UrlOrderSend, FOrderCurr.ToJSON(True) );
+
+  if(not(LAnswer.Length > 0))then
+  begin
+    ShowMessage(Restourant.Consts.Strings.ErrorOrderNotSended + #13#10 + Restourant.Consts.Strings.ErrorInternetAnswerInvalid);
+    exit;
+  end;
+
+  LJSON   := TJsonObject.Create;
+  LStream := TStringStream.Create(LAnswer);
+  try
+    try
+      LJSON.LoadFromStream(LStream);
+    except
+      ShowMessage(Restourant.Consts.Strings.ErrorOrderNotSended + #13#10 + Restourant.Consts.Strings.ErrorInternetAnswerInvalid + #13#10 + #13#10 + LAnswer);
+    end;
+    if(LJSON.Count > 0)then
+    begin
+      if LJSON.Contains( UpperCase('ERROR') ) then
+        ShowMessage(Restourant.Consts.Strings.ErrorOrderNotSended + #13#10 +
+                    Restourant.Consts.Strings.ErrorInternetAnswer + #13#10 + LJSON.S['ERROR'] )
+      else
+        if LJSON.Contains( UpperCase('OK') ) then
+        begin
+          FOrderCurr.S[Restourant.Consts.UserData.FieldOrderDOCNUMBERSTR] := LJSON.S['DOCNUMBERSTR'];
+          FOrderCurr.D[Restourant.Consts.UserData.FieldOrderDATE_COMMIT ] := StrToDate( LJSON.S['DATE_COMMIT'] );
+
+          LOldID := FOrderCurr.I[Restourant.Consts.UserData.FieldOrderID];
+
+          FOrderCurr := UserBaseOrderNew;
+          FUDB.Flush(Restourant.Consts.UserData.ORDERS);
+
+          FillOrders;
+          FillOrder( UserBaseOrderById(LOldID) );
+          ShowMessage(Restourant.Consts.Strings.ErrorOrderSendedSuccesfully + #13#10 +
+                      ErrorOrderNewNumber + ' "' + LJSON.S['DOCNUMBERSTR'] + '".' + #13#10 +
+                      Restourant.Consts.Strings.ErrorInternetAnswer         + #13#10 + LJSON.S['OK']);
+        end;
+    end
+    else
+      ShowMessage(Restourant.Consts.Strings.ErrorOrderNotSended + #13#10 + Restourant.Consts.Strings.ErrorInternetNoAnswer);
+  finally
+    LStream.Free;
+    LJSON.Free;
+  end;
+end;
+
+
+procedure TFormMain.DoLangChange;
+begin
+
+end;
+
+procedure TFormMain.FillCard(const TMC_ID:Integer; const aColor:TColor);
 var
   LRow :TJsonObject;
-  i    :Integer;
 begin
-  LRow := GetTMCObject(TMC_ID);
+  LRow := DataBaseTMCObject(TMC_ID);
   if(LRow = nil)then exit;
 
+  FtiMenuTMC.HelpKeyword   := TMC_ID.ToString();
+  FtiMenuList.HelpKeyword  := LRow.S['TMC_GROUP_ID'];
+  FtiMenuGroup.HelpKeyword := DataBaseTmcCtgrIdByGroup( LRow.S['TMC_GROUP_ID'].ToInteger );
+
   FVbgrTMC.Fill.Color    := aColor;
-  FVimgTMC_IMAGE.Bitmap.Clear( FVbgrTMC.Fill.Color );
-  FVimgTMC_IMAGE.Bitmap.LoadFromFile( GetTMCImage(TMC_ID) );
-  FVimgTMC_IMAGE.Height  := 220;
-  FVimgTMC_IMAGE.Tag     := TMC_ID;
+  FVimgTMC.Bitmap.Clear( FVbgrTMC.Fill.Color );
+  FVimgTMC.Bitmap.LoadFromFile( ImageFileNameTMC(TMC_ID) );
+  FVimgTMC.Height  := 220;
+  FVimgTMC.Tag     := TMC_ID;
 
   FVlblTMC_NAME.Text   := LRow.S['NAME'];
   FVlblTMC_COMENT.Text := LRow.S['COMENT'];
   FVlblTMC_PRICE.Text  := Restourant.Consts.Strings.TmcPrice + ' ' + FormatFloat('# ### ##0.00', SafeFloat(LRow.S['PRICE']));
   FVlblTMC_EDIZM.Text  := Restourant.Consts.Strings.TmcEdizm + ' ' + LRow.S['EDIZM_SNAME'];
+  FVbtnPlus.Tag        := TMC_ID;
+  FVlblQuant.Text      := UserBaseOrderQntGet(TMC_ID).ToString;
+  FVbtnMinus.Tag       := TMC_ID;
 
   FHbgrTMC.Fill.Color    := aColor;
-  FHimgTMC_IMAGE.Bitmap.Clear( FVbgrTMC.Fill.Color );
-  FHimgTMC_IMAGE.Bitmap.LoadFromFile( GetTMCImage(TMC_ID) );
-  FHimgTMC_IMAGE.Width   := 330;
-  FHimgTMC_IMAGE.Tag     := TMC_ID;
+  FHimgTMC.Bitmap.Clear( FVbgrTMC.Fill.Color );
+  FHimgTMC.Bitmap.LoadFromFile( ImageFileNameTMC(TMC_ID) );
+  FHimgTMC.Width   := 330;
+  FHimgTMC.Tag     := TMC_ID;
 
   FHlblTMC_NAME.Text   := LRow.S['NAME'];
   FHlblTMC_COMENT.Text := LRow.S['COMENT'];
   FHlblTMC_PRICE.Text  := Restourant.Consts.Strings.TmcPrice + ' ' + FormatFloat('# ### ##0.00', SafeFloat(LRow.S['PRICE']));
   FHlblTMC_EDIZM.Text  := Restourant.Consts.Strings.TmcEdizm + ' ' + LRow.S['EDIZM_SNAME'];
+  FHbtnPlus.Tag        := TMC_ID;
+  FHlblQuant.Text      := UserBaseOrderQntGet(TMC_ID).ToString;
+  FHbtnMinus.Tag       := TMC_ID;
 
   if(Height > Width)then
   begin
-    FVimgTMC_IMAGE.Height := Trunc(Width * 2 / 3);
+    FVimgTMC.Height  := Trunc(Width * 2 / 3);
     FtcTMC.ActiveTab := FtiTMCV;
   end
   else
   begin
-    FHimgTMC_IMAGE.Width  := Trunc( ( Height - (FTopBar.Height + 16)*2 ) * 3 / 2);
+    FHimgTMC.Width   := Trunc( ( Height - (FTopBar.Height + 16)*2 ) * 3 / 2);
     FtcTMC.ActiveTab := FtiTMCH;
   end;
 end;
@@ -1196,12 +1855,15 @@ end;
 
 procedure TFormMain.actOrderExecute(Sender: TObject);
 begin
-  FtcMain.ActiveTab := FtiMainOrder;
+  FtcMain.ActiveTab  := FtiMainOrder;
+  FtcOrder.ActiveTab := FtiOrder;
+  FillOrder(FOrderCurr);
 end;
 
 procedure TFormMain.actUserExecute(Sender: TObject);
 begin
   FtcMain.ActiveTab := FtiMainUser;
+  FillUser;
 end;
 
 end.

@@ -1,10 +1,9 @@
 unit Restourant.JsonDatabase;
-
 interface
 uses
-   System.SysUtils,  System.IOUtils, System.Types, System.Classes, System.Variants
-  ,Restourant.JsonDataObject
-  ;
+  System.SysUtils,  System.IOUtils, System.Types, System.Classes, System.Variants
+ ,Restourant.JsonDataObject
+ ;
 type
   TJsonDataBase = class(TComponent)
   private
@@ -21,6 +20,8 @@ type
     function      ReloadTable(const TableName:string):TJsonObject;
     procedure     DeleteTable(const TableName:string; SaveData: Boolean = False);
     procedure     Clear(SaveData: Boolean = False);
+    procedure     Flush; overload;
+    procedure     Flush(const TableName:string); overload;
     procedure     ReloadAll;
     property      DataBasePath:string read FDataBasePath write SetDataBasePath;
     property      FileExt     :string read FFileExt      write FFileExt;
@@ -76,13 +77,29 @@ end;
 procedure TJsonDataBase.ReloadAll;
 var
   i :Integer;
+  LStrList :TStringList;
 begin
-  for i:=0 to FTables.Count-1 do
-    ReloadTable( FTables.Names[i] );
+  LStrList := TStringList.Create;
+  try
+    for i:=0 to FTables.Count-1 do
+      LStrList.Add( FTables.Names[i] );
+
+    FTables.Clear;
+
+    for i:=0 to LStrList.Count-1 do
+      ReloadTable( LStrList.Names[i] );
+  finally
+    LStrList.Free;
+  end;
 end;
 
 function TJsonDataBase.ReloadTable(const TableName: string): TJsonObject;
+var
+  LIndex :Integer;
 begin
+  LIndex := FTables.IndexOf(TableName);
+  if(LIndex > -1)then
+    FTables.Delete(LIndex);
   Result := NewTable(TableName);
   try
     Result.LoadFromFile( System.IOUtils.TPath.Combine(FDataBasePath, TableName) + FFileExt );
@@ -104,19 +121,29 @@ begin
   if(LObj <> nil)then
   begin
     if SaveData then
-      LObj.SaveToFile( System.IOUtils.TPath.Combine(FDataBasePath, TableName) + FFileExt, False );
+      LObj.SaveToFile( System.IOUtils.TPath.Combine(FDataBasePath, TableName + FFileExt), False );
     FTables.Delete( FTables.IndexOfName(TableName) );
   end;
 end;
 
 procedure TJsonDataBase.Clear(SaveData: Boolean = False);
+begin
+  if SaveData then
+    Flush;
+  FTables.Clear;
+end;
+
+procedure TJsonDataBase.Flush;
 var
   i :Integer;
 begin
-  if SaveData then
-    for i:=0 to FTables.Count-1 do
-      TJsonObject(FTables.Objects[i]).SaveToFile( System.IOUtils.TPath.Combine(FDataBasePath, FTables.Names[i]) + FFileExt , False );
-  FTables.Clear;
+  for i:=0 to FTables.Count-1 do
+    Flush( FTables[i] );
+end;
+
+procedure TJsonDataBase.Flush(const TableName:string);
+begin
+  NewTable(TableName).SaveToFile( System.IOUtils.TPath.Combine(FDataBasePath, TableName + FFileExt), False );
 end;
 
 end.

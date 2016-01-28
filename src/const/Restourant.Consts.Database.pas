@@ -14,6 +14,12 @@ const
   R_TMC_GROUPSHARE              = 'r_tmc_groupshare';
   R_ENTRS_PLATES                = 'r_entrs_plates';
 
+  FieldConstID                  = 'ID';
+  FieldConstFINT                = 'FINT';
+  FieldConstFFLOAT              = 'FFLOAT';
+  FieldConstFSTR                = 'FSTR';
+  FieldConstFBLOB               = 'FBLOB';
+
 implementation
 
 end.

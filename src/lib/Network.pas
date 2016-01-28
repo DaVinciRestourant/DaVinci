@@ -5,11 +5,14 @@ function IsConnected: Boolean;
 function IsWiFiConnected: Boolean;
 function IsMobileConnected: Boolean;
 
+function PhoneNumberLine1:string;
+
 implementation
 uses
   System.SysUtils
 {$IFDEF ANDROID}
  ,Androidapi.JNIBridge, Androidapi.JNI.GraphicsContentViewText, Androidapi.JNI.JavaTypes
+ ,Androidapi.JNI.Provider, Androidapi.JNI.Telephony
  ,Androidapi.Helpers
 {$ENDIF}
  ;
@@ -52,8 +55,39 @@ type
   TJConnectivityManager = class(TJavaGenericImport<JConnectivityManagerClass, JConnectivityManager>) end;
 {$ENDIF}
 
-function GetConnectivityManager: JConnectivityManager;
 {$IFDEF ANDROID}
+function GetPhoneManager: JTelephonyManager;
+var
+  LPhoneService :JObject;
+begin
+  Result := nil;
+  LPhoneService :=  SharedActivityContext.getSystemService(TJContext.JavaClass.TELEPHONY_SERVICE);
+  if not Assigned(LPhoneService) then
+    exit;
+  Result := TJTelephonyManager.Wrap( (LPhoneService as ILocalObject).GetObjectID );
+end;
+{$ENDIF}
+
+function PhoneNumberLine1:string;
+{$IFDEF ANDROID}
+var
+  LPhoneManager :JTelephonyManager;
+begin
+  Result := System.SysUtils.EmptyStr;
+  LPhoneManager := GetPhoneManager;
+  if Assigned(LPhoneManager) then
+  begin
+    Result := JStringToString( LPhoneManager.getLine1Number );
+  end;
+end;
+{$ELSE}
+begin
+  Result := '+380501230321';
+end;
+{$ENDIF}
+
+{$IFDEF ANDROID}
+function GetConnectivityManager: JConnectivityManager;
 var
   ConnectivityServiceNative: JObject;
 begin
@@ -77,6 +111,10 @@ begin
   if Assigned(ActiveNetwork) then
     Result := ActiveNetwork.isConnected;
 end;
+{$ELSE}
+begin
+  Result := True;
+end;
 {$ENDIF}
 
 function IsWiFiConnected: Boolean;
@@ -90,6 +128,10 @@ begin
   WiFiNetwork := ConnectivityManager.getNetworkInfo(TJConnectivityManager.JavaClass.TYPE_WIFI);
   Result := WiFiNetwork.isConnected;
 end;
+{$ELSE}
+begin
+  Result := True;
+end;
 {$ENDIF}
 
 function IsMobileConnected: Boolean;
@@ -102,6 +144,10 @@ begin
   ConnectivityManager := GetConnectivityManager;
   MobileNetwork := ConnectivityManager.getNetworkInfo(TJConnectivityManager.JavaClass.TYPE_MOBILE);
   Result := MobileNetwork.isConnected;
+end;
+{$ELSE}
+begin
+  Result := True;
 end;
 {$ENDIF}
 

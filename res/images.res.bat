@@ -7,4 +7,4 @@ SET SRCPATH=D:\projects\pascal\DaVinciAndroid\src
 SET RESPATH=D:\projects\pascal\DaVinciAndroid\res
 cd %RESPATH%
 erase /F/Q/ images.res
-D:\appl\borland\delphi22\bin\brcc32.exe -32 %RESPATH%\images.rc > %RESPATH%\images.res-%SUFFIX%.log
+D:\appl\borland\delphi22\bin\brcc32.exe -32 %RESPATH%\images.rc > ..\dcu\images.res-%SUFFIX%.log

@@ -1,6 +1,7 @@
 unit Restourant.Consts.Filenames;
 interface
 const
+  FolderStore                     = 'DaVinci';
   FolderImages                    = 'images';
   FolderImagesTMC                 = 'tmc';
 
@@ -16,6 +17,10 @@ const
   UrlDatabaseZip                  = 'http://davinci.co.ua/database.json.php';
   UrlImagesVersion                = 'http://davinci.co.ua/images.version.php';
   UrlImagesZip                    = 'http://davinci.co.ua/images.file.php';
+  UrlUserRegister                 = 'http://davinci.co.ua/android.register.php';
+  UrlOrderSend                    = 'http://davinci.co.ua/android.order.php';
 
+  PostContentJSON                 = 'application/json';
+  PostVariableJSON                = 'JSON';
 implementation
 end.
