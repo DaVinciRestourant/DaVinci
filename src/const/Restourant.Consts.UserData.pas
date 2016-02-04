@@ -3,7 +3,6 @@ interface
 const
   Folder                        = 'userdata';
   FileExt                       = '.json';
-  Database                      = 'orders.sqlite';
 
   PROFILE                       = 'profile';
   ORDERS                        = 'orders';
@@ -34,8 +33,6 @@ const
 
   FieldDocNAME                  = 'NAME';
   FieldDocTMC_ID                = 'TMC_ID';
-  FieldDocTMC_NAME              = 'TMC_NAME';
-  FieldDocEDIZM_SNAME           = 'EDIZM_SNAME';
   FieldDocPRICE                 = 'PRICE';
   FieldDocQUANT                 = 'QUANT';
   FieldDocTOTAL                 = 'TOTAL';

@@ -17,6 +17,7 @@ type
       const aPaddingLeft, aPaddingTop, aPaddingRight, aPaddingBottom:System.Single;
       const aColor, aBorderColor :System.UITypes.TColor
     ): TRectangle;
+    procedure SetCaption(const Value:string);
   end;
 
   TImageHelper = class helper for TImage
@@ -476,6 +477,18 @@ begin
     aMarginLeft, aMarginTop, aMarginRight, aMarginBottom, aPaddingLeft, aPaddingTop, aPaddingRight, aPaddingBottom, aColor, aBorderColor);
   Result := TLabel.New(aOwner, aBackground, 0,0,aBackground.Height,aBackground.Width, FMX.Types.TAlignLayout.Client, 1,1,1,1,0,0,0,0,
     aText, aTextAlign, aVertTextAlign, aFontColor, aFontSize, aFontStyle);
+end;
+
+procedure TRectangleHelper.SetCaption(const Value: string);
+var
+  i :Integer;
+begin
+  for i:=0 to ControlsCount-1 do
+    if(Controls[i] is TLabel)then
+    begin
+      TLabel(Controls[i]).Text := Value;
+      Break;
+    end;
 end;
 
 end.

@@ -1,80 +1,47 @@
-unit Restourant.Consts.Strings;
+п»їunit Restourant.Consts.Strings;
 interface
 type
   TLang = (
      lngRUS
     ,lngUSA
-    ,lngUKR
     ,lngDEU
 //    ,lngFRA
+    ,lngUKR
   );
 const
-  LangId :array[TLang]of Integer = (
+  LangID :array[TLang]of Integer = (
      1000054
     ,1000056
-    ,1000071
     ,1000090
 //    ,1000091
+    ,1000071
+  );
+  LangNames :array[TLang]of string = (
+     'Р СѓСЃСЃРєРёР№'
+    ,'English'
+    ,'Deutsch'
+//    ,'FranГ§ais'
+    ,'РЈРєСЂР°С—РЅСЃСЊРєР°'
   );
 
-  ApplicationTitle    = 'DaVinci';
+  ErrorInternerNotConnected        = 'РќРµС‚ РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє Internet.'+#13#10;
+  ErrorInternetAnswer              = 'РћС‚РІРµС‚ СЃРµСЂРІРµСЂР°: ';
+  ErrorInternetNoAnswer            = 'РЎРµСЂРІРµСЂ РЅРµ РѕС‚РІРµС‡Р°РµС‚.';
+  ErrorInternetAnswerInvalid       = 'РЎРµСЂРІРµСЂ РІРµРЅСѓР» РЅРµРґРѕРїСѓСЃС‚РёРјС‹Р№ С„РѕСЂРјР°С‚ РґР°РЅРЅС‹С….';
 
-  TabItemMainMenu     = 'Меню';
-  TabItemMainOrder    = 'Заказ';
-  TabItemMainUser     = 'Профиль';
+  ErrorUserPasswordNotEntered      = 'РќРµ РІРІРµРґРµРЅ РїР°СЂРѕР»СЊ РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ!';
+  ErrorUserPasswordNotConfirmed    = 'Р’РІРµРґРµРЅРЅС‹Р№ РїР°СЂРѕР»СЊ РЅРµ СЂР°РІРµРЅ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЋ!';
+  ErrorUserYouShouldToConnect      = 'РџРѕРґРєР»СЋС‡РёС‚РµСЃСЊ Рє СЃРµС‚Рё Internet РґР»СЏ СЂРµРіРёСЃС‚СЂР°С†РёРё РёР»Рё РѕР±РЅРѕРІР»РµРЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРѕР№ РёРЅС„РѕСЂРјР°С†РёРё.';
+  ErrorUserRegisteredSuccesfully   = 'Р РµРіРёСЃС‚СЂР°С†РёСЏ СѓСЃРїРµС€РЅРѕ Р·Р°РІРµСЂС€РµРЅР°.';
+  ErrorUserNotRegistered           = 'РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ РІ СЃРёСЃС‚РµРјРµ.';
 
-  TabItemMenuCat      = 'Категории';
-  TabItemMenuGroup    = 'Группы';
-  TabItemMenuList     = 'Список';
-  TabItemMenuTMC      = 'ТМЦ';
-  TabItemMenuImg      = 'Изобр.';
-
-  TabItemOrderList    = 'История';
-  TabItemOrder        = 'Заказ';
-
-  TmcPrice            = 'Цена:';
-  TmcEdizm            = 'Выход:';
-  TmcImageHint        = 'Нажмите здесь для заказа';
-
-  OrderCurrent        = 'Текущий заказ';
-  OrderNo             = 'Номер';
-  OrderNoNotExists    = 'заказ ещё не отправлен.';
-  OrderDateFrom       = 'от';
-  OrderDate           = 'Дата';
-  OrderTotal          = 'Итого';
-  OrderName           = 'Примечания';
-
-  OrderDataImg        = 'Фото';
-  OrderDataName       = 'Блюдо';
-  OrderDataPrice      = 'Цена';
-  OrderDataQuant      = 'Кол.';
-  OrderDataTotal      = 'Сумма';
-  OrderDataQuantChange= 'нажмите здесь, чтобы изменить количество.';
-
-  btnUserRegister     = 'Регистрация';
-  btnUserUpdate       = 'Изменить информацию';
-  btnOrderSend        = 'Отправить заказ';
-  btnOrderSendDone    = 'Заказ отправлен';
-  btnOrderClear       = 'Удалить историю';
-
-  ErrorInternerNotConnected        = 'Нет подключения к Internet.'+#13#10;
-  ErrorInternetAnswer              = 'Ответ сервера: ';
-  ErrorInternetNoAnswer            = 'Сервер не отвечает.';
-  ErrorInternetAnswerInvalid       = 'Сервер венул недопустимый формат данных.';
-
-  ErrorUserPasswordNotEntered      = 'Не введен пароль для пользователя!';
-  ErrorUserPasswordNotConfirmed    = 'Введенный пароль не равен подтверждению!';
-  ErrorUserYouShouldToConnect      = 'Подключитесь к сети Internet для регистрации или обновления пользовательской информации.';
-  ErrorUserRegisteredSuccesfully   = 'Регистрация успешно завершена.';
-  ErrorUserNotRegistered           = 'Не удалось зарегистрироваться в системе.';
-
-  ErrorUserNotRegisteredToOrder    = 'Не удается отправить заказ, пользователь не зарегистрирован!'+#13#10+
-                                     'Пожалуйста, зарегистрируйтесь в системе для того, чтобы иметь возможность отправлять заказы.';
-  ErrorOrderWasSend                = 'Этот заказ уже отправлен.';
-  ErrorOrderWasSendNoQuant         = 'Не могу отправить пустой заказ, Вы ничего не выбрали в электронном меню!';
-  ErrorOrderSendedSuccesfully      = 'Заказ успешно отправлен.';
-  ErrorOrderNotSended              = 'Не удалось отправить заказ.';
-  ErrorOrderNewNumber              = 'Заказу присвоен номер';
+  ErrorUserNotRegisteredToOrder    = 'РќРµ СѓРґР°РµС‚СЃСЏ РѕС‚РїСЂР°РІРёС‚СЊ Р·Р°РєР°Р·, РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅ!'+#13#10+
+                                     'РџРѕР¶Р°Р»СѓР№СЃС‚Р°, Р·Р°СЂРµРіРёСЃС‚СЂРёСЂСѓР№С‚РµСЃСЊ РІ СЃРёСЃС‚РµРјРµ РґР»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ РёРјРµС‚СЊ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РѕС‚РїСЂР°РІР»СЏС‚СЊ Р·Р°РєР°Р·С‹.';
+  ErrorOrderWasSend                = 'Р­С‚РѕС‚ Р·Р°РєР°Р· СѓР¶Рµ РѕС‚РїСЂР°РІР»РµРЅ.';
+  ErrorOrderWasSendNoQuant         = 'РќРµ РјРѕРіСѓ РѕС‚РїСЂР°РІРёС‚СЊ РїСѓСЃС‚РѕР№ Р·Р°РєР°Р·, Р’С‹ РЅРёС‡РµРіРѕ РЅРµ РІС‹Р±СЂР°Р»Рё РІ СЌР»РµРєС‚СЂРѕРЅРЅРѕРј РјРµРЅСЋ!';
+  ErrorOrderSendedSuccesfully      = 'Р—Р°РєР°Р· СѓСЃРїРµС€РЅРѕ РѕС‚РїСЂР°РІР»РµРЅ.';
+  ErrorOrderNotSended              = 'РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РїСЂР°РІРёС‚СЊ Р·Р°РєР°Р·.';
+  ErrorOrderNewNumber              = 'Р—Р°РєР°Р·Сѓ РїСЂРёСЃРІРѕРµРЅ РЅРѕРјРµСЂ';
 
 function TLangToInt(const Lang:TLang):Integer;
 function IntToTLang(const ID:Integer):TLang;
