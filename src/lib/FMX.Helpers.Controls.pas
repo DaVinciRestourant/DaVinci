@@ -8,6 +8,16 @@ uses
  ,FMX.ListBox, FMX.Layouts, FMX.Edit, FMX.DateTimeCtrls
  ;
 type
+  TProgressBarHelper =  class helper for TProgressBar
+  public
+    class function New(aOwner:TComponent; aParent:TFmxObject;
+      const aLeft, aTop, aHeight, aWidth :System.Single;
+      const aAlign:FMX.Types.TAlignLayout;
+      const aMarginLeft, aMarginTop, aMarginRight, aMarginBottom:System.Single;
+      const aPaddingLeft, aPaddingTop, aPaddingRight, aPaddingBottom:System.Single
+    ): TProgressBar;
+  end;
+
   TRectangleHelper = class helper for TRectangle
   public
     class function New(aOwner:TComponent; aParent:TFmxObject;
@@ -489,6 +499,35 @@ begin
       TLabel(Controls[i]).Text := Value;
       Break;
     end;
+end;
+
+{ TProgressBarHelper }
+
+class function TProgressBarHelper.New(aOwner: TComponent; aParent: TFmxObject;
+  const aLeft, aTop, aHeight, aWidth: System.Single;
+  const aAlign: FMX.Types.TAlignLayout; const aMarginLeft, aMarginTop,
+  aMarginRight, aMarginBottom, aPaddingLeft, aPaddingTop, aPaddingRight,
+  aPaddingBottom: System.Single): TProgressBar;
+begin
+  Result := TProgressBar.Create(aOwner);
+  with Result do
+  begin
+    Parent         := aParent;
+    HitTest        := False;
+    Position.X     := aLeft;
+    Position.Y     := aTop;
+    Height         := aHeight;
+    Width          := aWidth;
+    Align          := aAlign;
+    Padding.Left   := aPaddingLeft;
+    Padding.Top    := aPaddingTop;
+    Padding.Right  := aPaddingRight;
+    Padding.Bottom := aPaddingBottom;
+    Margins.Left   := aMarginLeft;
+    Margins.Top    := aMarginTop;
+    Margins.Right  := aMarginRight;
+    Margins.Bottom := aMarginBottom;
+  end;
 end;
 
 end.

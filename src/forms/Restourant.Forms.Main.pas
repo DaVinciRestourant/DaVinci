@@ -6,6 +6,7 @@ uses
  ,FMX.Types, FMX.Graphics, FMX.Objects, FMX.Controls, FMX.Controls.Presentation
  ,FMX.StdCtrls, FMX.Forms, FMX.Dialogs, FMX.TabControl, FMX.Gestures
  ,FMX.ListBox, FMX.Layouts, FMX.Edit, FMX.DateTimeCtrls
+ ,IdHTTP, IdComponent
  ,Restourant.Consts.Strings
  ,Restourant.JsonDataObject, Restourant.JsonDatabase
  ;
@@ -33,6 +34,8 @@ type
         FTopBtnLangImg          :FMX.Objects.TImage;
     FRightBar                   :FMX.Objects.TRectangle;
       FLangBtn                  :array[TLang] of FMX.Objects.TRectangle;
+      FSettBtn                  :FMX.Objects.TRectangle;
+    FProgressBar                :FMX.StdCtrls.TProgressBar;
     FtcMain                     :FMX.TabControl.TTabControl;
       FtiMainMenu               :FMX.TabControl.TTabItem;
         FtcMenu                 :FMX.TabControl.TTabControl;
@@ -106,11 +109,18 @@ type
             FedtUsrPWD          :FMX.Edit.TEdit;
             FedtUsrPWD2         :FMX.Edit.TEdit;
             FbtnUsrRegister     :FMX.StdCtrls.TButton;
+      FtiMainSett               :FMX.TabControl.TTabItem;
+        FlbxSettings            :FMX.ListBox.TListBox;
+          FlblSettUpdateDatabase:FMX.StdCtrls.TLabel;
+          FlblSettUpdateImages  :FMX.StdCtrls.TLabel;
     {$ENDREGION 'Controls declaration and placement'}
     procedure   actBackExecute     (Sender :TObject);
     procedure   actMenuExecute     (Sender :TObject);
     procedure   actOrderExecute    (Sender :TObject);
     procedure   actUserExecute     (Sender :TObject);
+    procedure   actSettExecute     (Sender :TObject);
+    procedure   actUpdateExecute   (Sender :TObject);
+    procedure   actUpdateImgExecute(Sender :TObject);
     procedure   DoEnterEditUser    (Sender :TObject);
     procedure   DoChangeTabControl (Sender :TObject);
     procedure   DoClickLangBtn     (Sender: TObject);
@@ -149,6 +159,7 @@ type
     procedure   CreateControlsTopBar;
     procedure   CreateControlsOrd   (aParentObj :TFMXObject);
     procedure   CreateControlsUser  (aParentObj :TFMXObject);
+    procedure   CreateControlsSett  (aParentObj :TFMXObject);
     procedure   CreateControlsTMCHor(aParentObj :TFMXObject);
     procedure   CreateControlsTMCVer(aParentObj :TFMXObject);
     function    CreateListbox(aParentObj :TFMXObject; const BackgroundResource:string):FMX.ListBox.TListBox;
@@ -158,8 +169,14 @@ type
                   const ResourceName:string; AnOnClick:TNotifyEvent; var AnImage:FMX.Objects.TImage):FMX.Objects.TRectangle;
     function    CreateRectButton(Parent:TControl; const aWidth:Integer; const AnAlign:FMX.Types.TAlignLayout; const Caption, ResourceName:string; AnOnClick:TNotifyEvent): FMX.Objects.TRectangle;
     {$ENDREGION 'Create controls methods'}
+    {$REGION 'HTTP Download progress'}
+    procedure   DoOnIdHTTPWorkBegin(Sender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
+    procedure   DoOnIdHTTPWork(Sender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+    procedure   DoOnIdHTTPWorkEnd(Sender: TObject; AWorkMode: TWorkMode);
+    {$ENDREGION 'HTTP Download progress'}
   public
     procedure   Resize;                                                                 override;
+    procedure   DoShow;                                                                 override;
     procedure   KeyUp(var Key: Word; var KeyChar: System.WideChar; Shift: TShiftState); override;
   public
     FLang       :Restourant.Consts.Strings.TLang;
@@ -191,6 +208,7 @@ type
     {$REGION 'Internet'}
     function    HTTPGetString(const Host, URL:string):string;
     function    HTTPGetFile(const Host, URL, FileName:string):Boolean;
+    function    HTTPGetFileProgress(const Host, URL, FileName:string):Boolean;
     function    HTTPPost(const Host, URL: string; const ParamNames, ParamValues:array of string): string;
     function    HTTPPostJSON(const Host, URL, PostJSON:string):string;
     {$ENDREGION}
@@ -222,7 +240,6 @@ uses
  ,System.Zip, System.Math
  ,FMX.Helpers.Controls
  ,Network
- ,IdHTTP, IdComponent
  ;
 
 function SafeFloat(const Value: string; DefaultValue :Extended = 0): Extended;
@@ -356,7 +373,7 @@ begin
   begin
     with FDB.Tables[Restourant.Consts.Database.C] do
       for LCounter:=0 to A[Restourant.Consts.Database.Section].Count-1 do
-        if(A[Restourant.Consts.Database.Section].O[LCounter].S[Restourant.Consts.Database.FieldConstID] = ConstName )then
+        if(A[Restourant.Consts.Database.Section].O[LCounter].S[Restourant.Consts.Database.FieldConstID] = ConstName.ToUpper )then
         begin
           Result := A[Restourant.Consts.Database.Section].O[LCounter].S[Restourant.Consts.Database.FieldConstFSTR];
           Break;
@@ -364,7 +381,7 @@ begin
   end
   else
   begin
-    LName := ConstName + TLangToInt(FLang).ToString;
+    LName := ConstName.ToUpper + TLangToInt(FLang).ToString;
     with FDB.Tables[Restourant.Consts.Database.C] do
       for LCounter:=0 to A[Restourant.Consts.Database.Section].Count-1 do
         if(A[Restourant.Consts.Database.Section].O[LCounter].S[Restourant.Consts.Database.FieldConstID] = LName )then
@@ -375,7 +392,7 @@ begin
     if(Result = System.SysUtils.EmptyStr)then
       with FDB.Tables[Restourant.Consts.Database.C] do
         for LCounter:=0 to A[Restourant.Consts.Database.Section].Count-1 do
-          if(A[Restourant.Consts.Database.Section].O[LCounter].S[Restourant.Consts.Database.FieldConstID] = ConstName)then
+          if(A[Restourant.Consts.Database.Section].O[LCounter].S[Restourant.Consts.Database.FieldConstID] = ConstName.ToUpper)then
           begin
             Result := A[Restourant.Consts.Database.Section].O[LCounter].S[Restourant.Consts.Database.FieldConstFSTR];
             Break;
@@ -402,16 +419,17 @@ function TFormMain.DataBaseGetFieldLocal(Row: TJsonObject; FieldName: string = '
 var
   LFieldName:string;
 begin
+  LFieldName := FieldName.ToUpper;
   if(FLang = Restourant.Consts.Strings.TLang.lngRUS)then
   begin
-    Result := Row.S[FieldName];
+    Result := Row.S[LFieldName];
   end
   else
   begin
-    LFieldName := FieldName + Restourant.Consts.Strings.TLangToInt(FLang).ToString;
+    LFieldName := LFieldName + Restourant.Consts.Strings.TLangToInt(FLang).ToString;
     Result := Row.S[LFieldName];
-    if( not(Result.Length > 0) )then
-      Result := Row.S[FieldName];
+    if( Result.IsEmpty and (FieldName.ToUpper = 'NAME') ) then
+      Result := Row.S[FieldName.ToUpper];
   end;
 end;
 
@@ -654,14 +672,14 @@ begin
   begin
     if(FedtUsrPWD.Text = System.SysUtils.EmptyStr)then
     begin
-      ShowMessage(Restourant.Consts.Strings.ErrorUserPasswordNotEntered);
+      ShowMessage(DataBaseConstString('EUserPasswordNotEntered') );
       exit;
     end;
   end;
   if( (FedtUsrPWD.Text <> System.SysUtils.EmptyStr) or (FedtUsrPWD2.Text <> System.SysUtils.EmptyStr) )then
     if( FedtUsrPWD.Text <> FedtUsrPWD2.Text )then
     begin
-      ShowMessage(Restourant.Consts.Strings.ErrorUserPasswordNotConfirmed);
+      ShowMessage(DataBaseConstString('EUserPasswordNotConfirmed'));
       exit;
     end;
   with FUDB.Tables[Restourant.Consts.UserData.PROFILE] do
@@ -691,6 +709,31 @@ begin
   LHttp := TIdHTTP.Create(nil);
   LStream := TMemoryStream.Create;
   try
+    LHttp.Request.UserAgent := Restourant.Consts.Filenames.UrlUserAgent; // Important! Some hosters does not allow to working without client browser name.
+    LHttp.Request.Host      := Host;
+    LHttp.Get(URL, LStream);
+    if System.IOUtils.TFile.Exists(FileName) then
+      System.IOUtils.TFile.Delete(FileName);
+    LStream.SaveToFile(FileName);
+  finally
+    LStream.Free;
+    LHttp.Free;
+  end;
+  Result := True;
+end;
+
+function TFormMain.HTTPGetFileProgress(const Host, URL, FileName: string): Boolean;
+var
+  LStream :TMemoryStream;
+  LHttp   :TIdHTTP;
+begin
+  Result := False;
+  LHttp := TIdHTTP.Create(nil);
+  LStream := TMemoryStream.Create;
+  try
+    LHttp.OnWorkBegin       := DoOnIdHTTPWorkBegin;
+    LHttp.OnWorkEnd         := DoOnIdHTTPWorkEnd;
+    LHttp.OnWork            := DoOnIdHTTPWork;
     LHttp.Request.UserAgent := Restourant.Consts.Filenames.UrlUserAgent; // Important! Some hosters does not allow to working without client browser name.
     LHttp.Request.Host      := Host;
     LHttp.Get(URL, LStream);
@@ -792,9 +835,8 @@ begin
   if not TFile.Exists( ImageFileNameTMC(0) ) then
   begin
     LFileArchive := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.Filenames.FileNameImageTMCPacked);
-    if not TFile.Exists(LFileArchive) then
-      HTTPGetFile(Restourant.Consts.Filenames.UrlHost, Restourant.Consts.Filenames.UrlImagesZip, LFileArchive );
-    ExtractFileArchive(LFileArchive, ExtractFilePath(ImageFileNameTMC(0)) );
+    if TFile.Exists(LFileArchive) then
+      ExtractFileArchive(LFileArchive, ExtractFilePath(ImageFileNameTMC(0)) );
   end;
   Result := True;
 end;
@@ -820,6 +862,9 @@ begin
 
   CreateControlsTopBar;
 
+  FProgressBar := FMX.StdCtrls.TProgressBar.New(Self, Self, 0, 2000, 32, 200, TAlignLayout.Bottom, 0,0,0,0,0,0,0,0);
+  FProgressBar.Visible := False;
+
   FtcMain := FMX.TabControl.TTabControl.Create(Self);
   with FtcMain do
   begin
@@ -830,6 +875,7 @@ begin
   FtiMainMenu  := FtcMain.Add(FMX.TabControl.TTabItem);
   FtiMainOrder := FtcMain.Add(FMX.TabControl.TTabItem);
   FtiMainUser  := FtcMain.Add(FMX.TabControl.TTabItem);
+  FtiMainSett  := FtcMain.Add(FMX.TabControl.TTabItem);
   FtcMain.ActiveTab := FtiMainMenu;
 
   FtcMenu  := FMX.TabControl.TTabControl.Create(Self);
@@ -852,8 +898,8 @@ begin
     Align       := FMX.Types.TAlignLayout.Client;
     TabPosition := FMX.TabControl.TTabPosition.None;
   end;
-  FtiTMCH := FtcTMC.Add(FMX.TabControl.TTabItem); FtiTMCH.Text := 'H';
-  FtiTMCV := FtcTMC.Add(FMX.TabControl.TTabItem); FtiTMCV.Text := 'V';
+  FtiTMCH := FtcTMC.Add(FMX.TabControl.TTabItem);
+  FtiTMCV := FtcTMC.Add(FMX.TabControl.TTabItem);
   FtcTMC.ActiveTab := FtiTMCV;
 
   FtcOrder := FMX.TabControl.TTabControl.Create(Self);
@@ -876,6 +922,7 @@ begin
   CreateControlsTMCVer(FtiTMCV);
   CreateControlsOrd ( FtiOrder );
   CreateControlsUser( FtiMainUser  );
+  CreateControlsSett( FtiMainSett  );
 
   FtcMain.OnChange := DoChangeTabControl;
   FtcMenu.OnChange := DoChangeTabControl;
@@ -930,6 +977,25 @@ begin
   UserBaseFree;
   DataBaseFree;
   inherited Destroy;
+end;
+
+procedure TFormMain.DoOnIdHTTPWork(Sender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+begin
+  FProgressBar.Value := AWorkCount;
+  Application.ProcessMessages;
+end;
+
+procedure TFormMain.DoOnIdHTTPWorkBegin(Sender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
+begin
+  FProgressBar.Value    := 0;
+  FProgressBar.Max      := AWorkcountMax;
+  FProgressBar.Visible  := True;
+end;
+
+procedure TFormMain.DoOnIdHTTPWorkEnd(Sender: TObject; AWorkMode: TWorkMode);
+begin
+  FProgressBar.Value    := FProgressBar.Max;
+  FProgressBar.Visible  := False;
 end;
 
 procedure TFormMain.DoOnTimerOrder(Sender: TObject);
@@ -1098,7 +1164,7 @@ begin
     Margins.Bottom  := 0;
   end;
   aBackground := FMX.Objects.TRectangle.New(Result,Result,0,0,Result.Height, Result.Width, FMX.Types.TAlignLayout.Client, 0,0,0,0,0,0,0,0,Result.TagString.ToInteger(), Result.TagString.ToInteger());
-  Result.TagObject  := aBackground;
+  Result.TagObject := aBackground;
 end;
 
 procedure TFormMain.CreateControlsUser(aParentObj :TFMXObject);
@@ -1142,6 +1208,50 @@ begin
   FbtnUsrRegister.OnClick := DoClickUserRegister;
 end;
 
+procedure TFormMain.CreateControlsSett(aParentObj: TFMXObject);
+    function CreateSettingsButton(aListBox:TListBox; const aCaption, aImageResource:string; aOnClick:TNotifyEvent;
+               var aLabel :FMX.StdCtrls.TLabel):FMX.ListBox.TListBoxItem;
+    var
+      LBackgr :FMX.Objects.TRectangle;
+      LImage  :FMX.Objects.TImage;
+    begin
+      Result := FMX.ListBox.TListBoxItem.Create(aListBox);
+      with Result do
+      begin
+        Parent          := aListBox;
+        Height          := aListBox.ItemHeight;
+        Width           := aListBox.ItemWidth;
+        TagString       := Integer($FFFFFFFF).ToString;
+        OnClick         := aOnClick;
+        OnMouseDown     := DoMouseDownListItem;
+        OnMouseUp       := DoMouseUpListItem;
+        Margins.Left    := 8;
+        Margins.Top     := 8;
+        Margins.Right   := 8;
+        Margins.Bottom  := 0;
+      end;
+      LBackgr := FMX.Objects.TRectangle.New(Result,Result,0,0,Result.Height,Result.Width, FMX.Types.TAlignLayout.Client, 0,0,0,0,8,8,8,8, $FFC0C0CF, $FFC0C0CF);
+      Result.TagObject := LBackgr;
+      if( aImageResource.Length > 0) then
+      begin
+        LImage  := FMX.Objects.TImage.New(Result,LBackgr,Result.Height, 0, Result.Height, Result.Height,FMX.Types.TAlignLayout.Left,0,0,0,0,0,0,0,0,FMX.Objects.TImageWrapMode.Stretch);
+        ImageLoadFromResource(LImage.Bitmap, aImageResource);
+      end;
+      aLabel := FMX.StdCtrls.TLabel.New(Result, LBackgr, 0, 0,FlbxSettings.ItemHeight, FlbxSettings.ItemWidth,FMX.Types.TAlignLayout.Client, 8,0,0,0, 0, 0, 0, 0,
+                  aCaption, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, ColorMaterial(0), 12, [System.UITypes.TFontStyle.fsBold]);
+    end;
+
+var
+  LItem :FMX.ListBox.TListBoxItem;
+begin
+  FlbxSettings := CreateListbox(FtiMainSett, 'BACKGROUND');
+  FlbxSettings.ItemHeight := 64;
+  FlbxSettings.ItemWidth  := FlbxSettings.ItemHeight * 4;
+
+  LItem := CreateSettingsButton(FlbxSettings, DataBaseConstString('EDownloadDatabase'),'DOWNLOAD', actUpdateExecute   , FlblSettUpdateDatabase);
+  LItem := CreateSettingsButton(FlbxSettings, DataBaseConstString('EDownloadImages')  ,'DOWNLOAD', actUpdateImgExecute, FlblSettUpdateImages  );
+end;
+
 procedure TFormMain.CreateControlsTopBar;
 var
   LLang :Restourant.Consts.Strings.TLang;
@@ -1182,6 +1292,18 @@ begin
     ImageLoadFromResource(LImg.Bitmap, 'FLAG'+Restourant.Consts.Strings.TLangToInt(LLang).ToString );
     LTop := LTop + FRightBar.Width + 2;
   end;
+
+  FSettBtn := FMX.Objects.TRectangle.New(FRightBar,FRightBar,0,LTop,FRightBar.Width,FRightBar.Width,FMX.Types.TAlignLayout.Bottom,0,0,0,0,8,8,8,8,FRightBar.Fill.Color, FRightBar.Fill.Color);
+  with FSettBtn do
+  begin
+    HitTest     := True;
+    OnMouseDown := DoMouseDownTopBtn;
+    OnMouseUp   := DoMouseUpTopBtn;
+    OnClick     := actSettExecute;
+  end;
+  LImg := FMX.Objects.TImage.New(FSettBtn,FSettBtn,0,0,FSettBtn.Height,FSettBtn.Width,FMX.Types.TAlignLayout.Client, 0,0,0,0,0,0,0,0,FMX.Objects.TImageWrapMode.Stretch);
+  ImageLoadFromResource(LImg.Bitmap, 'SETTINGS');
+  LTop := LTop + FRightBar.Width + 2;
 end;
 
 procedure TFormMain.CreateControlsOrd(aParentObj :TFMXObject);
@@ -1313,6 +1435,23 @@ begin
   end;
 end;
 
+procedure TFormMain.DoShow;
+var
+  LFolder      :string;
+  LFileArchive :string;
+begin
+  inherited DoShow;
+  if not TFile.Exists( ImageFileNameTMC(0) ) then
+  begin
+    LFileArchive := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.Filenames.FileNameImageTMCPacked);
+    if not TFile.Exists(LFileArchive) then
+    begin
+      if HTTPGetFileProgress(Restourant.Consts.Filenames.UrlHost, Restourant.Consts.Filenames.UrlImagesZip, LFileArchive) then
+        ExtractFileArchive(LFileArchive, ExtractFilePath(ImageFileNameTMC(0)) );
+    end;
+  end;
+end;
+
 procedure TFormMain.Resize;
 var
   LWidth   :Single;
@@ -1321,6 +1460,7 @@ begin
   inherited Resize;
   FbgrUser.Width          := FsbUser.Width - 28;
   FbgrUser.Height         := System.Math.Max(FsbUser.Height * 2, 400);
+  FlbxSettings.Columns    := Trunc(Width / (FlbxSettings.ItemWidth + 16) );
   FlbxCategory.Columns    := Trunc(Width / 240);
   FlbxGroup.Columns       := Trunc(Width / 240);
   FlbxList.Columns        := Trunc(Width / 330);
@@ -1736,13 +1876,13 @@ begin
   if not UserDataUserSave then exit;
   if not Network.IsConnected then
   begin
-    ShowMessage(Restourant.Consts.Strings.ErrorInternerNotConnected + #13#10 + Restourant.Consts.Strings.ErrorUserYouShouldToConnect);
+    ShowMessage( DataBaseConstString('EInternerNotConnected') + #13#10 + DataBaseConstString('EUserYouShouldToConnect') );
     exit;
   end;
   LAnswer := HTTPPostJSON(Restourant.Consts.Filenames.UrlHost, Restourant.Consts.Filenames.UrlUserRegister, FUDB.Tables[Restourant.Consts.UserData.PROFILE].ToJSON(True) );
   if(not(LAnswer.Length > 0))then
   begin
-    ShowMessage(Restourant.Consts.Strings.ErrorUserNotRegistered + #13#10 + Restourant.Consts.Strings.ErrorInternetAnswerInvalid);
+    ShowMessage( DataBaseConstString('EUserNotRegistered') + #13#10 + DataBaseConstString('EInternetAnswerInvalid') );
     exit;
   end;
   LJSON   := TJsonObject.Create;
@@ -1751,13 +1891,13 @@ begin
     try
       LJSON.LoadFromStream(LStream);
     except
-      ShowMessage(Restourant.Consts.Strings.ErrorUserNotRegistered + #13#10 + Restourant.Consts.Strings.ErrorInternetAnswerInvalid);
+      ShowMessage( DataBaseConstString('EUserNotRegistered') + #13#10 + DataBaseConstString('EInternetAnswerInvalid') );
     end;
     if(LJSON.Count > 0)then
     begin
       if LJSON.Contains( UpperCase('ERROR') ) then
-        ShowMessage(Restourant.Consts.Strings.ErrorUserNotRegistered + #13#10 +
-                    Restourant.Consts.Strings.ErrorInternetAnswer    + #13#10 + LJSON.S['ERROR'] )
+        ShowMessage(DataBaseConstString('EUserNotRegistered') + #13#10 +
+                    DataBaseConstString('EInternetAnswer')    + #13#10 + LJSON.S['ERROR'] )
       else
         if LJSON.Contains( UpperCase('OK') ) then
         begin
@@ -1768,12 +1908,12 @@ begin
           end;
           FUDB.Flush(Restourant.Consts.UserData.PROFILE);
           FedtUsrID.Enabled := False;
-          ShowMessage(Restourant.Consts.Strings.ErrorUserRegisteredSuccesfully + #13#10 +
-                      Restourant.Consts.Strings.ErrorInternetAnswer            + #13#10 + LJSON.S['OK']);
+          ShowMessage(DataBaseConstString('EUserRegisteredSuccesfully') + #13#10 +
+                      DataBaseConstString('EInternetAnswer')            + #13#10 + LJSON.S['OK']);
         end;
     end
     else
-      ShowMessage(Restourant.Consts.Strings.ErrorUserNotRegistered + #13#10 + Restourant.Consts.Strings.ErrorInternetNoAnswer);
+      ShowMessage( DataBaseConstString('EUserNotRegistered') + #13#10 + DataBaseConstString('EInternetNoAnswer') );
   finally
     LStream.Free;
     LJSON.Free;
@@ -1813,24 +1953,24 @@ var
 begin
   if not Network.IsConnected then
   begin
-    ShowMessage(Restourant.Consts.Strings.ErrorInternerNotConnected + #13#10 + Restourant.Consts.Strings.ErrorUserYouShouldToConnect);
+    ShowMessage( DataBaseConstString('EInternerNotConnected') + #13#10 + DataBaseConstString('EUserYouShouldToConnect') );
     exit;
   end;
   with FUDB.Tables[Restourant.Consts.UserData.PROFILE] do
     if(S[Restourant.Consts.UserData.FieldUserID] = System.SysUtils.EmptyStr)then
     begin
       actUserExecute(nil);
-      ShowMessage(Restourant.Consts.Strings.ErrorUserNotRegisteredToOrder);
+      ShowMessage(DataBaseConstString('EUserNotRegisteredToOrder'));
       exit;
     end;
   if(FOrderCurr.S[Restourant.Consts.UserData.FieldOrderDOCNUMBERSTR] <> System.SysUtils.EmptyStr)then
   begin
-    ShowMessage(Restourant.Consts.Strings.ErrorOrderWasSend);
+    ShowMessage(DataBaseConstString('EOrderWasSend'));
     exit;
   end;
   if(FOrderCurr.A[Restourant.Consts.UserData.FieldOrder_DOCUMENT].Count = 0)then
   begin
-    ShowMessage(Restourant.Consts.Strings.ErrorOrderWasSendNoQuant);
+    ShowMessage(DataBaseConstString('EOrderWasSendNoQuant'));
     exit;
   end;
   FOrderCurr.S[Restourant.Consts.UserData.FieldOrderUSER_ID] := FUDB.Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserID];
@@ -1839,7 +1979,7 @@ begin
 
   if(not(LAnswer.Length > 0))then
   begin
-    ShowMessage(Restourant.Consts.Strings.ErrorOrderNotSended + #13#10 + Restourant.Consts.Strings.ErrorInternetAnswerInvalid);
+    ShowMessage(DataBaseConstString('EOrderNotSended') + #13#10 + DataBaseConstString('EInternetAnswerInvalid') );
     exit;
   end;
 
@@ -1849,13 +1989,13 @@ begin
     try
       LJSON.LoadFromStream(LStream);
     except
-      ShowMessage(Restourant.Consts.Strings.ErrorOrderNotSended + #13#10 + Restourant.Consts.Strings.ErrorInternetAnswerInvalid + #13#10 + #13#10 + LAnswer);
+      ShowMessage(DataBaseConstString('EOrderNotSended') + #13#10 + DataBaseConstString('EInternetAnswerInvalid') + LAnswer);
     end;
     if(LJSON.Count > 0)then
     begin
       if LJSON.Contains( UpperCase('ERROR') ) then
-        ShowMessage(Restourant.Consts.Strings.ErrorOrderNotSended + #13#10 +
-                    Restourant.Consts.Strings.ErrorInternetAnswer + #13#10 + LJSON.S['ERROR'] )
+        ShowMessage(DataBaseConstString('EOrderNotSended') + #13#10 +
+                    DataBaseConstString('EInternetAnswer') + #13#10 + LJSON.S['ERROR'] )
       else
         if LJSON.Contains( UpperCase('OK') ) then
         begin
@@ -1869,13 +2009,13 @@ begin
 
           FillOrders;
           FillOrder( UserBaseOrderById(LOldID) );
-          ShowMessage(Restourant.Consts.Strings.ErrorOrderSendedSuccesfully + #13#10 +
-                      ErrorOrderNewNumber + ' "' + LJSON.S[Restourant.Consts.UserData.FieldOrderDOCNUMBERSTR] + '".' + #13#10 +
-                      Restourant.Consts.Strings.ErrorInternetAnswer         + #13#10 + LJSON.S['OK']);
+          ShowMessage(DataBaseConstString('EOrderSendedSuccesfully') + #13#10 +
+                      DataBaseConstString('EOrderNewNumber') + ' "' + LJSON.S[Restourant.Consts.UserData.FieldOrderDOCNUMBERSTR] + '".' + #13#10 +
+                      DataBaseConstString('EInternetAnswer')         + #13#10 + LJSON.S['OK']);
         end;
     end
     else
-      ShowMessage(Restourant.Consts.Strings.ErrorOrderNotSended + #13#10 + Restourant.Consts.Strings.ErrorInternetNoAnswer);
+      ShowMessage( DataBaseConstString('EOrderNotSended') + #13#10 + DataBaseConstString('EInternetNoAnswer') );
   finally
     LStream.Free;
     LJSON.Free;
@@ -1887,10 +2027,12 @@ begin
   FTopBtnLang.Tag         := Restourant.Consts.Strings.TLangToInt(FLang);
   ImageLoadFromResource(FTopBtnLangImg.Bitmap, 'FLAG'+Restourant.Consts.Strings.TLangToInt(FLang).ToString);
 
-  LlblRestourantName.Text := DataBaseConstString('ENTNAMETYPE') + ' ' + DataBaseConstString('ENTNAME');
-  LlblRestouarntAddr.Text := DataBaseConstString('ENTADDR')+#13#10+DataBaseConstString('ENTPHONES')+#13#10+'E-mail: '+DataBaseConstString('ENTEMAIL');
-  Application.Title       := LlblRestourantName.Text;
-  Caption                 := LlblRestourantName.Text;
+  LlblRestourantName.Text     := DataBaseConstString('ENTNAMETYPE') + ' ' + DataBaseConstString('ENTNAME');
+  LlblRestouarntAddr.Text     := DataBaseConstString('ENTADDR')+#13#10+DataBaseConstString('ENTPHONES')+#13#10+'E-mail: '+DataBaseConstString('ENTEMAIL');
+  Application.Title           := LlblRestourantName.Text;
+  Caption                     := LlblRestourantName.Text;
+  FlblSettUpdateDatabase.Text := DataBaseConstString('EDownloadDatabase');
+  FlblSettUpdateImages.Text   := DataBaseConstString('EDownloadImages');
 
   FillCat;
   if(FtcMain.ActiveTab = FtiMainMenu)then
@@ -1982,6 +2124,41 @@ begin
   FillOrder(FOrderCurr);
   FtcMain.ActiveTab  := FtiMainOrder;
   FtcOrder.ActiveTab := FtiOrder;
+end;
+
+procedure TFormMain.actSettExecute(Sender: TObject);
+begin
+  FRightBar.Visible := False;
+  FtcMain.ActiveTab := FtiMainSett;
+end;
+
+procedure TFormMain.actUpdateExecute(Sender: TObject);
+var
+  LFileArchive :string;
+begin
+  LFileArchive := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.Database.PackedFile);
+  if HTTPGetFileProgress(Restourant.Consts.Filenames.UrlHost, Restourant.Consts.Filenames.UrlDatabaseZip, LFileArchive ) then
+  begin
+    if ExtractFileArchive(LFileArchive, ExtractFilePath( DataBaseFilePath(Restourant.Consts.Database.C) ) )then
+    begin
+      DataBaseFree;
+      DataBaseCreate;
+      DoLangChange;
+      ShowMessage( DataBaseConstString('EDatabaseDownloaded') );
+    end;
+  end;
+end;
+
+procedure TFormMain.actUpdateImgExecute(Sender: TObject);
+var
+  LFileArchive :string;
+begin
+  LFileArchive := System.IOUtils.TPath.Combine(FolderMyDocuments, Restourant.Consts.Filenames.FileNameImageTMCPacked);
+  if HTTPGetFileProgress(Restourant.Consts.Filenames.UrlHost, Restourant.Consts.Filenames.UrlImagesZip, LFileArchive )then
+  begin
+    ExtractFileArchive(LFileArchive, ExtractFilePath(ImageFileNameTMC(0)) );
+    ShowMessage( DataBaseConstString('ETMCIMAGESDOWNLOADED') );
+  end;
 end;
 
 procedure TFormMain.actUserExecute(Sender: TObject);
