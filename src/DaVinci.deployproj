@@ -221,6 +221,14 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
+        <DeployFile Include="D:\projects\pascal\restourant\src\Android\Release\classes.dex" Condition="'$(Config)'=='Release'">
+            <RemoteDir>DaVinci\classes\</RemoteDir>
+            <RemoteName>classes.dex</RemoteName>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
         <DeployFile Include="..\res\davinci0036.png" Condition="'$(Config)'=='Debug'">
             <RemoteDir>DaVinci\res\drawable-ldpi\</RemoteDir>
             <RemoteName>ic_launcher.png</RemoteName>

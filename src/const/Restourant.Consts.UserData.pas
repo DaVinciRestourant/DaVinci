@@ -20,6 +20,7 @@ const
   FieldUserPWD                  = 'PWD';
   FieldUserPWDNEW               = 'PWDNEW';
   FieldUserLang                 = 'LANG';
+  FieldUserNETWORK              = 'NETWORK';
 
   FieldOrderID                  = 'ID';
   FieldOrderNAME                = 'NAME';

@@ -13,6 +13,8 @@ uses
 type
   TFormMain = class(TForm)
   private
+    const BtnWidthQuant :Integer = 80;
+  private
     {$REGION 'Main components'}
     FDB                         :TJsonDataBase;
     FUDB                        :TJsonDataBase;
@@ -58,6 +60,7 @@ type
                   FVlblTMC_EDIZM:FMX.StdCtrls.TLabel;
                 FVLayoutQuant   :FMX.Layouts.TLayout;
                   FVbtnPlus     :FMX.Objects.TRectangle;
+                  FVbtnUpd      :FMX.Objects.TRectangle;
                   FVlblQuant    :FMX.StdCtrls.TLabel;
                   FVbtnMinus    :FMX.Objects.TRectangle;
               FtiTMCV           :FMX.TabControl.TTabItem;
@@ -69,6 +72,7 @@ type
                 FHlblTMC_EDIZM  :FMX.StdCtrls.TLabel;
                 FHLayoutQuant   :FMX.Layouts.TLayout;
                   FHbtnPlus     :FMX.Objects.TRectangle;
+                  FHbtnUpd      :FMX.Objects.TRectangle;
                   FHlblQuant    :FMX.StdCtrls.TLabel;
                   FHbtnMinus    :FMX.Objects.TRectangle;
       FtiMainOrder              :FMX.TabControl.TTabItem;
@@ -130,6 +134,7 @@ type
     procedure   DoClickList        (Sender: TObject);
     procedure   DoClickOrder       (Sender: TObject);
     procedure   DoClickTmcPlus     (Sender: TObject);
+    procedure   DoClickTmcUpd      (Sender: TObject);
     procedure   DoClickTmcMinus    (Sender: TObject);
     procedure   DoClickUserRegister(Sender: TObject);
     procedure   DoClickOrderSend   (Sender: TObject);
@@ -198,8 +203,6 @@ type
     function    UserBaseOrderLastID:Integer;
     function    UserBaseOrderName(const ID :Integer):string;
     function    UserBaseOrderById(const ID :Integer):TJsonObject;
-    procedure   UserBaseOrderPlus  (const TMC_ID:Integer);
-    procedure   UserBaseOrderMinus (const TMC_ID:Integer);
     function    UserBaseOrderQntGet(const TMC_ID:Integer):Double;
     procedure   UserBaseOrderQntSet(const TMC_ID:Integer; const Value:Double);
     procedure   UserBaseOrderCalcSum;
@@ -473,8 +476,18 @@ begin
       Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserEMAIL]     := System.SysUtils.EmptyStr;
       Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserFIRSTNAME] := System.SysUtils.EmptyStr;
       Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserLASTNAME]  := System.SysUtils.EmptyStr;
+      Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserNETWORK ]  := System.SysUtils.EmptyStr;
       Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserPHONE]     := Network.PhoneNumberLine1;
       Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserPWD]       := System.SysUtils.EmptyStr;
+      {$IFDEF MSWINDOWS}
+      Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserNETWORK ]  := 'windows'.ToLower();
+      {$ENDIF}
+      {$IFDEF ANDROID}
+      Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserNETWORK ]  := 'android'.ToLower();
+      {$ENDIF}
+      {$IFDEF MACOS}
+      Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserNETWORK ]  := 'ios'.ToLower();
+      {$ENDIF}
       Flush(Restourant.Consts.UserData.PROFILE);
     end
     else
@@ -522,16 +535,6 @@ begin
   end;
 end;
 
-procedure TFormMain.UserBaseOrderPlus(const TMC_ID: Integer);
-begin
-  UserBaseOrderQntSet(TMC_ID, UserBaseOrderQntGet(TMC_ID) + 1);
-end;
-
-procedure TFormMain.UserBaseOrderMinus(const TMC_ID: Integer);
-begin
-  UserBaseOrderQntSet(TMC_ID, UserBaseOrderQntGet(TMC_ID) - 1);
-end;
-
 function TFormMain.UserBaseOrderQntGet(const TMC_ID: Integer): Double;
 var
   LCounter :Integer;
@@ -574,12 +577,12 @@ begin
   if(LDocItem = nil)then
   begin
     LDocItem := FOrderCurr.A[Restourant.Consts.UserData.FieldOrder_DOCUMENT].AddObject;
-    LDocItem.S[Restourant.Consts.UserData.FieldDocNAME       ] := System.SysUtils.EmptyStr;
-    LDocItem.I[Restourant.Consts.UserData.FieldDocTMC_ID     ] := TMC_ID;
+    LDocItem.S[Restourant.Consts.UserData.FieldDocNAME  ] := System.SysUtils.EmptyStr;
+    LDocItem.I[Restourant.Consts.UserData.FieldDocTMC_ID] := TMC_ID;
   end;
-  LDocItem.F[Restourant.Consts.UserData.FieldDocPRICE      ] := SafeFloat(LTmcItem.S[Restourant.Consts.Database.FieldRefPRICE]);
-  LDocItem.F[Restourant.Consts.UserData.FieldDocQUANT      ] := Value;
-  LDocItem.F[Restourant.Consts.UserData.FieldDocTOTAL      ] := SafeFloat(LTmcItem.S[Restourant.Consts.Database.FieldRefPRICE]) * Value;
+  LDocItem.F[Restourant.Consts.UserData.FieldDocPRICE   ] := SafeFloat(LTmcItem.S[Restourant.Consts.Database.FieldRefPRICE]);
+  LDocItem.F[Restourant.Consts.UserData.FieldDocQUANT   ] := Value;
+  LDocItem.F[Restourant.Consts.UserData.FieldDocTOTAL   ] := SafeFloat(LTmcItem.S[Restourant.Consts.Database.FieldRefPRICE]) * Value;
   UserBaseOrderCalcSum;
 end;
 
@@ -862,7 +865,7 @@ begin
 
   CreateControlsTopBar;
 
-  FProgressBar := FMX.StdCtrls.TProgressBar.New(Self, Self, 0, 2000, 32, 200, TAlignLayout.Bottom, 0,0,0,0,0,0,0,0);
+  FProgressBar := FMX.StdCtrls.TProgressBar.New(Self, Self, 0, 2000, 64, 200, TAlignLayout.Bottom, 0,0,0,0,0,0,0,0);
   FProgressBar.Visible := False;
 
   FtcMain := FMX.TabControl.TTabControl.Create(Self);
@@ -959,8 +962,9 @@ begin
     OnTimer  := DoOnTimerOrder;
     Enabled  := True;
   end;
-{$IFNDEF ANDROID}
+{$IFDEF MSWINDOWS}
   WindowState := System.UITypes.TWindowState.wsMaximized;
+  DoOnTimerUpdate( FTimerUpdate );
 {$ENDIF}
 end;
 
@@ -1074,7 +1078,7 @@ var
   LLabel :FMX.StdCtrls.TLabel;
   LImage :FMX.Objects.TImage;
 begin
-  Result := FMX.Objects.TRectangle.New(Parent,Parent,0,0,Parent.Height,aWidth,AnAlign,0,0,0,0,0,0,0,0, $FFFFFFFF, ColorMaterial(0) );
+  Result := FMX.Objects.TRectangle.New(Parent,Parent,0,0,Parent.Height,aWidth,AnAlign,0,0,0,0,1,1,1,1, $FFFFFFFF, ColorMaterial(0) );
   with Result do
   begin
     HitTest     := True;
@@ -1340,7 +1344,7 @@ begin
                            System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 12, [], ColorMaterial(0), $FFFFFFFF, LBackgr);
     FlblOrderHdrPrice := FMX.StdCtrls.TLabel.NewBG(aParentObj,LLayout, 800,0,LLayout.Height,48,FMX.Types.TAlignLayout.Right,0,0,0,0,0,0,0,0,
                            System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 12, [], ColorMaterial(0), $FFFFFFFF, LBackgr);
-    FlblOrderHdrQuant := FMX.StdCtrls.TLabel.NewBG(aParentObj,LLayout,1200,0,LLayout.Height,32,FMX.Types.TAlignLayout.Right,0,0,0,0,0,0,0,0,
+    FlblOrderHdrQuant := FMX.StdCtrls.TLabel.NewBG(aParentObj,LLayout,1200,0,LLayout.Height,48,FMX.Types.TAlignLayout.Right,0,0,0,0,0,0,0,0,
                            System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 12, [], ColorMaterial(0), $FFFFFFFF, LBackgr);
     FlblOrderHdrTotal := FMX.StdCtrls.TLabel.NewBG(aParentObj,LLayout,1600,0,LLayout.Height,72,FMX.Types.TAlignLayout.Right,0,0,24,0,0,0,0,0,
                            System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Center, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 12, [], ColorMaterial(0), $FFFFFFFF,LBackgr);
@@ -1373,10 +1377,11 @@ begin
                        System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 14, [System.UITypes.TFontStyle.fsBold]);
 
   FVLayoutQuant   := TLayout.New(aParentObj,FVbgrTMC,0,999, 48,200,FMX.Types.TAlignLayout.Bottom,0,0,0,0,0,8,0,8);
-  FVbtnPlus  := CreateRectButton(FVLayoutQuant, 96, FMX.Types.TAlignLayout.Left ,'Добавить', 'PLUS' , DoClickTmcPlus);
+  FVbtnPlus  := CreateRectButton(FVLayoutQuant, BtnWidthQuant, FMX.Types.TAlignLayout.Left ,' ', 'PLUS' , DoClickTmcPlus);
+  FVbtnUpd   := CreateRectButton(FVLayoutQuant, BtnWidthQuant, FMX.Types.TAlignLayout.Left ,' ', 'EDIT' , DoClickTmcUpd );
   FVlblQuant := FMX.StdCtrls.TLabel.New(FVLayoutQuant,FVLayoutQuant,FVbtnPlus.Width,0, FVLayoutQuant.Height,FVLayoutQuant.Height,FMX.Types.TAlignLayout.Client,0,0,8,0,0,0,0,0,
-                       System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Center, $FFFFFFFF, 20, [System.UITypes.TFontStyle.fsBold]);
-  FVbtnMinus := CreateRectButton(FVLayoutQuant, 96, FMX.Types.TAlignLayout.Right,'Удалить' , 'MINUS', DoClickTmcMinus);
+                       System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Center, $FFFFFFFF, 16, [System.UITypes.TFontStyle.fsBold]);
+  FVbtnMinus := CreateRectButton(FVLayoutQuant, BtnWidthQuant, FMX.Types.TAlignLayout.Right,' ' , 'MINUS', DoClickTmcMinus);
 end;
 
 procedure TFormMain.CreateControlsTMCHor(aParentObj :TFMXObject);
@@ -1395,10 +1400,11 @@ begin
   FHlblTMC_EDIZM  := FMX.StdCtrls.TLabel.New    (aParentObj,FHlblTMC_PRICE,0,  0, 20,160,FMX.Types.TAlignLayout.Top   ,0,0,0,0,0,0,0,0,
                        System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 14, [System.UITypes.TFontStyle.fsBold]);
   FHLayoutQuant   := TLayout.New(aParentObj,LLayout,0,999, 32,200,FMX.Types.TAlignLayout.Bottom,0,0,0,0,0,0,0,0);
-  FHbtnPlus  := CreateRectButton(FHLayoutQuant, 96, FMX.Types.TAlignLayout.Left ,'Добавить', 'PLUS' , DoClickTmcPlus);
+  FHbtnPlus  := CreateRectButton(FHLayoutQuant, BtnWidthQuant, FMX.Types.TAlignLayout.Left ,' ', 'PLUS' , DoClickTmcPlus);
+  FHbtnUpd   := CreateRectButton(FHLayoutQuant, BtnWidthQuant, FMX.Types.TAlignLayout.Left ,' ', 'EDIT' , DoClickTmcUpd );
   FHlblQuant := FMX.StdCtrls.TLabel.New(FHLayoutQuant,FHLayoutQuant,FHbtnPlus.Width,0, FHLayoutQuant.Height,FHLayoutQuant.Height,FMX.Types.TAlignLayout.Client,0,0,8,0,0,0,0,0,
-                       System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Center, $FFFFFFFF, 20, [System.UITypes.TFontStyle.fsBold]);
-  FHbtnMinus := CreateRectButton(FHLayoutQuant, 96, FMX.Types.TAlignLayout.Right,'Удалить' , 'MINUS', DoClickTmcMinus);
+                       System.SysUtils.EmptyStr, FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Center, $FFFFFFFF, 16, [System.UITypes.TFontStyle.fsBold]);
+  FHbtnMinus := CreateRectButton(FHLayoutQuant, BtnWidthQuant, FMX.Types.TAlignLayout.Right,' ' , 'MINUS', DoClickTmcMinus);
 end;
 
 function TFormMain.CanBack: Boolean;
@@ -1480,24 +1486,70 @@ begin
   end;
   if(LWidth < 400)then
   begin
-    FTopBar.Height          := 48;
-    FlbxCategory.ItemHeight := 48;
-    FlbxGroup.ItemHeight    := 32;
-    FHbgrTMC.Padding.Rect   := TRectF.Create(6,6,6,6);
-    FVbgrTMC.Padding.Rect   := TRectF.Create(6,6,6,6);
-    FHlblTMC_NAME.Height    := 24;
-    FVlblTMC_NAME.Height    := 24;
+    FTopBar.Height              := 48;
+    FlbxCategory.ItemHeight     := 48;
+    FlbxGroup.ItemHeight        := 32;
+    FHbgrTMC.Padding.Rect       := TRectF.Create(4,4,4,4);
+    FVbgrTMC.Padding.Rect       := TRectF.Create(4,4,4,4);
+    FHlblTMC_NAME.Height        := 24;
+    FVlblTMC_NAME.Height        := 24;
+    FHlblTMC_NAME.Font.Size     := 16;
+    FVlblTMC_NAME.Font.Size     := 16;
+    FVlblTMC_COMENT.Font.Size   := 12;
+    FVlblTMC_COMENT.Font.Size   := 12;
   end
   else
   begin
-    FTopBar.Height          := 64;
-    FlbxCategory.ItemHeight := 80;
-    FlbxGroup.ItemHeight    := 48;
-    FHbgrTMC.Padding.Rect   := TRectF.Create(16,16,16,16);
-    FVbgrTMC.Padding.Rect   := TRectF.Create(16,16,16,16);
-    FHlblTMC_NAME.Height    := 48;
-    FVlblTMC_NAME.Height    := 48;
+    FTopBar.Height              := 64;
+    FlbxCategory.ItemHeight     := 80;
+    FlbxGroup.ItemHeight        := 48;
+    FHbgrTMC.Padding.Rect       := TRectF.Create(16,16,16,16);
+    FVbgrTMC.Padding.Rect       := TRectF.Create(16,16,16,16);
+    if(LWidth > 599)then
+    begin
+      FHlblTMC_NAME.Height      := 64;
+      FVlblTMC_NAME.Height      := 64;
+      FHlblTMC_NAME.Font.Size   := 20;
+      FVlblTMC_NAME.Font.Size   := 20;
+      FHlblTMC_COMENT.Font.Size := 20;
+      FVlblTMC_COMENT.Font.Size := 20;
+    end
+    else
+    begin
+      FHlblTMC_NAME.Height      := 48;
+      FVlblTMC_NAME.Height      := 48;
+      FHlblTMC_NAME.Font.Size   := 18;
+      FVlblTMC_NAME.Font.Size   := 18;
+      FHlblTMC_COMENT.Font.Size := 12;
+      FVlblTMC_COMENT.Font.Size := 12;
+    end;
   end;
+  if( TControl(FHbtnPlus.Parent).Width < (BtnWidthQuant * 3.6) )then
+  begin
+    FHbtnPlus.Width  := FHbtnPlus.Height  + 2;
+    FHbtnUpd.Width   := FHbtnUpd.Height   + 2;
+    FHbtnMinus.Width := FHbtnMinus.Height + 2;
+  end
+  else
+  begin
+    FHbtnPlus.Width  := BtnWidthQuant;
+    FHbtnUpd.Width   := BtnWidthQuant;
+    FHbtnMinus.Width := BtnWidthQuant;
+  end;
+
+  if( TControl(FVbtnPlus.Parent).Width < (BtnWidthQuant * 3.6) )then
+  begin
+    FVbtnPlus.Width  := FVbtnPlus.Height  + 2;
+    FVbtnUpd.Width   := FVbtnUpd.Height   + 2;
+    FVbtnMinus.Width := FVbtnMinus.Height + 2;
+  end
+  else
+  begin
+    FVbtnPlus.Width  := BtnWidthQuant;
+    FVbtnUpd.Width   := BtnWidthQuant;
+    FVbtnMinus.Width := BtnWidthQuant;
+  end;
+
   for LCounter := 0 to FTopBar.ControlsCount-1 do
     if(FTopBar.Controls[LCounter] is TRectangle)then
       TRectangle(FTopBar.Controls[LCounter]).Width := FTopBar.Height;
@@ -1560,28 +1612,90 @@ begin
 end;
 
 procedure TFormMain.DoClickTmcMinus(Sender: TObject);
+var
+  LTmcId :Integer;
 begin
-  UserBaseOrderMinus(TComponent(Sender).Tag);
-  FHlblQuant.Text := UserBaseOrderQntGet(TComponent(Sender).Tag).ToString;
+  LTmcId := TComponent(Sender).Tag;
+  UserBaseOrderQntSet(LTmcId, UserBaseOrderQntGet(LTmcId) - 1);
+  FHlblQuant.Text := FormatFloat(Restourant.Consts.Database.FormatQUANT, UserBaseOrderQntGet(LTmcId));
   FVlblQuant.Text := FHlblQuant.Text;
 end;
 
 procedure TFormMain.DoClickTmcPlus(Sender: TObject);
+var
+  LTmcId :Integer;
 begin
-  UserBaseOrderPlus(TComponent(Sender).Tag);
-  FHlblQuant.Text := UserBaseOrderQntGet(TComponent(Sender).Tag).ToString;
+  LTmcId := TComponent(Sender).Tag;
+  UserBaseOrderQntSet(LTmcId, UserBaseOrderQntGet(LTmcId) + 1);
+  FHlblQuant.Text := FormatFloat(Restourant.Consts.Database.FormatQUANT, UserBaseOrderQntGet(LTmcId));
   FVlblQuant.Text := FHlblQuant.Text;
+end;
+
+procedure TFormMain.DoClickTmcUpd(Sender: TObject);
+var
+  LTmcId   :Integer;
+  LQuant   :Double;
+  LStr     :string;
+  LCounter :Integer;
+begin
+  LTmcId := TComponent(Sender).Tag;
+  LQuant := UserBaseOrderQntGet(LTmcId);
+  LStr   := FormatFloat(Restourant.Consts.Database.FormatQUANT, LQuant);
+  {$IFDEF ANDROID}
+  InputQuery(DataBaseConstString('TEXTBTNUPD'), DataBaseConstString('TEXTINPUTQUANT'), LStr,
+
+    procedure(const AResult: TModalResult; const AValue: string)
+    begin
+      case AResult of
+        mrOk    :
+        begin
+          LStr := aValue;
+          LStr := LStr.Replace('.', System.SysUtils.FormatSettings.DecimalSeparator);
+          LStr := LStr.Replace(',', System.SysUtils.FormatSettings.DecimalSeparator);
+          try
+            LQuant := LStr.ToDouble;
+            UserBaseOrderQntSet(LTmcId, LQuant);
+          except
+            ShowMessage( DataBaseConstString('EINVALIDQUANT') );
+            LQuant := UserBaseOrderQntGet(LTmcId);
+          end;
+          FHlblQuant.Text := FormatFloat(Restourant.Consts.Database.FormatQUANT, UserBaseOrderQntGet(LTmcId));
+          FVlblQuant.Text := FHlblQuant.Text;
+        end;
+        mrCancel:
+        begin
+        end;
+      end;
+    end
+
+  );
+  {$ELSE}
+  if InputQuery(DataBaseConstString('TEXTBTNUPD'), DataBaseConstString('TEXTINPUTQUANT'), LStr) then
+  begin
+    LStr := LStr.Replace('.', System.SysUtils.FormatSettings.DecimalSeparator);
+    LStr := LStr.Replace(',', System.SysUtils.FormatSettings.DecimalSeparator);
+    try
+      LQuant := LStr.ToDouble;
+      UserBaseOrderQntSet(LTmcId, LQuant);
+    except
+      ShowMessage( DataBaseConstString('EINVALIDQUANT') );
+      LQuant := UserBaseOrderQntGet(LTmcId);
+    end;
+    FHlblQuant.Text := FormatFloat(Restourant.Consts.Database.FormatQUANT, UserBaseOrderQntGet(LTmcId));
+    FVlblQuant.Text := FHlblQuant.Text;
+  end;
+  {$ENDIF}
 end;
 
 procedure TFormMain.DoMouseDownListItem(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
 begin
-  with FMX.Objects.TRectangle(TFMXObject(Sender).TagObject)do
+  with FMX.Objects.TRectangle(TFMXObject(Sender).TagObject) do
     Fill.Color := Fill.Color - $A0000000;
 end;
 
 procedure TFormMain.DoMouseUpListItem(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
 begin
-  with FMX.Objects.TRectangle(TFMXObject(Sender).TagObject)do
+  with FMX.Objects.TRectangle(TFMXObject(Sender).TagObject) do
     Fill.Color := Fill.Color + $A0000000;
 end;
 
@@ -1710,7 +1824,7 @@ begin
       LImagePlus := FMX.Objects.TImage.New(LImage,LImage,0,0,32,32,FMX.Types.TAlignLayout.None,0,0,0,0,0,0,0,0,FMX.Objects.TImageWrapMode.Stretch);
       ImageLoadFromResource(LImagePlus.Bitmap, 'PLUSCORNER');
       LLblName   := FMX.StdCtrls.TLabel.New(LItem,LBackgr,0,221,36,200,FMX.Types.TAlignLayout.Top, 0,0,0,0,0,0,0,0,
-                      DataBaseGetFieldLocal(LRow, Restourant.Consts.Database.FieldRefNAME), FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 16, [System.UITypes.TFontStyle.fsBold]);
+                      DataBaseGetFieldLocal(LRow, Restourant.Consts.Database.FieldRefNAME), FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 14, [System.UITypes.TFontStyle.fsBold]);
       LLblComent := FMX.StdCtrls.TLabel.New(LItem,LBackgr,0,261,32,200,FMX.Types.TAlignLayout.Top, 0,0,0,0,0,0,0,0,
                       LComent, FMX.Types.TTextAlign.Leading, FMX.Types.TTextAlign.Leading, $FFFFFFFF, 10, []);
       LLblPrice  := FMX.StdCtrls.TLabel.New(LItem,LBackgr,0,293,48,200,FMX.Types.TAlignLayout.Top, 0,0,0,0,0,0,0,0,
@@ -1815,7 +1929,7 @@ begin
       end;
       LLabel := FMX.StdCtrls.TLabel.New(LItem,LItem, 800,0,LItem.Height,48,FMX.Types.TAlignLayout.Right,0,0,0,0,0,0,0,0,
                              FormatFloat(Restourant.Consts.Database.FormatPRICE, O[LCounter].F[Restourant.Consts.UserData.FieldDocPRICE]), FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Leading, $FF000000, 12, [System.UITypes.TFontStyle.fsBold]);
-      LLabel := FMX.StdCtrls.TLabel.New(LItem,LItem,2000,0,LItem.Height,32,FMX.Types.TAlignLayout.Right,0,0,0,0,0,0,0,0,
+      LLabel := FMX.StdCtrls.TLabel.New(LItem,LItem,2000,0,LItem.Height,48,FMX.Types.TAlignLayout.Right,0,0,0,0,0,0,0,0,
                              FormatFloat(Restourant.Consts.Database.FormatQUANT, O[LCounter].F[Restourant.Consts.UserData.FieldDocQUANT]), FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Leading, $FF000000, 12, [System.UITypes.TFontStyle.fsBold]);
       LLabel := FMX.StdCtrls.TLabel.New(LItem,LItem,5000,0,LItem.Height,72,FMX.Types.TAlignLayout.Right,0,0,24,0,0,0,0,0,
                              FormatFloat(Restourant.Consts.Database.FormatPRICE, O[LCounter].F[Restourant.Consts.UserData.FieldDocTOTAL]), FMX.Types.TTextAlign.Trailing, FMX.Types.TTextAlign.Leading, $FF000000, 12, [System.UITypes.TFontStyle.fsBold]);
@@ -1879,6 +1993,15 @@ begin
     ShowMessage( DataBaseConstString('EInternerNotConnected') + #13#10 + DataBaseConstString('EUserYouShouldToConnect') );
     exit;
   end;
+  {$IFDEF MSWINDOWS}
+  FUDB.Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserNETWORK ]  := 'windows'.ToLower();
+  {$ENDIF}
+  {$IFDEF ANDROID}
+  FUDB.Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserNETWORK ]  := 'android'.ToLower();
+  {$ENDIF}
+  {$IFDEF MACOS}
+  FUDB.Tables[Restourant.Consts.UserData.PROFILE].S[Restourant.Consts.UserData.FieldUserNETWORK ]  := 'ios'.ToLower();
+  {$ENDIF}
   LAnswer := HTTPPostJSON(Restourant.Consts.Filenames.UrlHost, Restourant.Consts.Filenames.UrlUserRegister, FUDB.Tables[Restourant.Consts.UserData.PROFILE].ToJSON(True) );
   if(not(LAnswer.Length > 0))then
   begin
@@ -2063,8 +2186,10 @@ begin
   FtiMenuGroup.HelpKeyword := DataBaseTmcCtgrIdByGroup( LRow.S[Restourant.Consts.Database.FieldRefTMC_GROUP_ID].ToInteger );
 
   FHbtnPlus.SetCaption ( DataBaseConstString('TEXTBTNADD') );
+  FHbtnUpd.SetCaption  ( DataBaseConstString('TEXTBTNUPD') );
   FHbtnMinus.SetCaption( DataBaseConstString('TEXTBTNDEL') );
   FVbtnPlus.SetCaption ( DataBaseConstString('TEXTBTNADD') );
+  FVbtnUpd.SetCaption  ( DataBaseConstString('TEXTBTNUPD') );
   FVbtnMinus.SetCaption( DataBaseConstString('TEXTBTNDEL') );
 
   FVbgrTMC.Fill.Color    := aColor;
@@ -2078,7 +2203,8 @@ begin
   FVlblTMC_PRICE.Text  := DataBaseConstString('TEXTTMCPRICE') + ' ' + FormatFloat(Restourant.Consts.Database.FormatPRICE, SafeFloat(LRow.S[Restourant.Consts.Database.FieldRefPRICE]));
   FVlblTMC_EDIZM.Text  := DataBaseConstString('TEXTTMCPART' ) + ' ' + LRow.S[Restourant.Consts.Database.FieldRefEDIZM_SNAME];
   FVbtnPlus.Tag        := TMC_ID;
-  FVlblQuant.Text      := UserBaseOrderQntGet(TMC_ID).ToString;
+  FVbtnUpd.Tag         := TMC_ID;
+  FVlblQuant.Text      := FormatFloat(Restourant.Consts.Database.FormatQUANT, UserBaseOrderQntGet(TMC_ID));
   FVbtnMinus.Tag       := TMC_ID;
 
   FHbgrTMC.Fill.Color    := aColor;
@@ -2092,7 +2218,8 @@ begin
   FHlblTMC_PRICE.Text  := DataBaseConstString('TEXTTMCPRICE') + ' ' + FormatFloat(Restourant.Consts.Database.FormatPRICE, SafeFloat(LRow.S[Restourant.Consts.Database.FieldRefPRICE]));
   FHlblTMC_EDIZM.Text  := DataBaseConstString('TEXTTMCPART' ) + ' ' + LRow.S[Restourant.Consts.Database.FieldRefEDIZM_SNAME];
   FHbtnPlus.Tag        := TMC_ID;
-  FHlblQuant.Text      := UserBaseOrderQntGet(TMC_ID).ToString;
+  FHbtnUpd.Tag         := TMC_ID;
+  FHlblQuant.Text      := FormatFloat(Restourant.Consts.Database.FormatQUANT, UserBaseOrderQntGet(TMC_ID));
   FHbtnMinus.Tag       := TMC_ID;
 
   if(Height > Width)then

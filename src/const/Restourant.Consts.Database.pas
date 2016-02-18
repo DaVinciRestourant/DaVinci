@@ -32,7 +32,7 @@ const
   FieldRefGROUPNAME             = 'GROUPNAME';
 
   FormatPRICE                   = '# ### ##0.00';
-  FormatQUANT                   = '# ### ##0';
+  FormatQUANT                   = '# ### ##0.00';
   FormatDATE                    = 'dd.mm.yyyy';
 
 implementation
