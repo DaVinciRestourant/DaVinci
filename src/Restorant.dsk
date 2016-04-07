@@ -1,33 +1,43 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'d:\appl\borland\delphi22\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,37,17,51,0,0,,
-File_1=TSourceModule,'d:\appl\borland\delphi22\source\fmx\FMX.Dialogs.pas',0,1,616,29,628,0,0,,
-File_2=TSourceModule,'d:\appl\borland\delphi22\source\fmx\FMX.Platform.pas',0,1,184,22,199,0,0,,
-File_3=TSourceModule,'d:\appl\borland\delphi22\source\Indy10\System\IdComponent.pas',0,1,139,92,105,0,0,,
-File_4=TSourceModule,'d:\appl\borland\delphi22\source\Indy10\Core\IdTCPConnection.pas',0,1,340,35,365,0,0,,
-File_5=TSourceModule,'d:\appl\borland\delphi22\source\fmx\FMX.Forms.pas',0,1,616,1,708,0,0,,
-File_6=TSourceModule,'D:\projects\pascal\DaVinciAndroid\src\const\Restourant.Consts.Colors.pas',0,1,1,1,1,0,0,,
-File_7=TSourceModule,'d:\appl\borland\delphi22\source\fmx\FMX.Menus.pas',0,1,2402,1,2402,0,0,{{502,0}
-File_8=TSourceModule,'D:\home\DaVinci\data\r_tmc_groupshare.json',0,451,1,1,1,0,0,,
-File_9=TSourceModule,'d:\appl\borland\delphi22\source\fmx\FMX.Types.pas',0,1,3682,1,3684,0,0,{{4068,0}
-File_10=TSourceModule,'d:\appl\borland\delphi22\source\fmx\FMX.Objects.pas',0,1,1,86,18,0,0,,
-File_11=TSourceModule,'d:\appl\borland\delphi22\SOURCE\RTL\SYS\System.Types.pas',0,1,354,59,372,0,0,,
-File_12=TSourceModule,'d:\appl\borland\delphi22\source\rtl\common\System.IOUtils.pas',0,1,3605,18,3606,0,0,,
-File_13=TSourceModule,'D:\projects\pascal\DaVinciAndroid\src\lib\Network.pas',0,1,47,27,85,0,0,,
-File_14=TSourceModule,'D:\projects\pascal\temp\MasterDetail.pas',0,1,35,1,75,0,0,,
+File_0=TSourceModule,'D:\projects\pascal\restourant\src\lib\FMX.Helpers.Controls.pas',0,1,1,1,1,0,0,,
+File_1=TSourceModule,'D:\projects\pascal\restourant\src\const\Restourant.Consts.Colors.pas',0,1,1,1,1,0,0,,
+File_2=TSourceModule,'d:\appl\borland\delphi22\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,37,17,51,0,0,,
+File_3=TSourceModule,'d:\appl\borland\delphi22\source\fmx\FMX.Dialogs.pas',0,1,616,29,628,0,0,,
+File_4=TSourceModule,'d:\appl\borland\delphi22\source\fmx\FMX.Platform.pas',0,1,184,22,199,0,0,,
+File_5=TSourceModule,'d:\appl\borland\delphi22\source\Indy10\System\IdComponent.pas',0,1,139,92,105,0,0,,
+File_6=TSourceModule,'d:\appl\borland\delphi22\source\Indy10\Core\IdTCPConnection.pas',0,1,340,35,365,0,0,,
+File_7=TSourceModule,'d:\appl\borland\delphi22\source\fmx\FMX.Forms.pas',0,1,616,1,708,0,0,,
+File_8=TSourceModule,'D:\projects\pascal\DaVinciAndroid\src\const\Restourant.Consts.Colors.pas',0,1,1,1,1,0,0,,
+File_9=TSourceModule,'d:\appl\borland\delphi22\source\fmx\FMX.Menus.pas',0,1,2402,1,2402,0,0,{{502,0}
+File_10=TSourceModule,'D:\home\DaVinci\data\r_tmc_groupshare.json',0,451,1,1,1,0,0,,
+File_11=TSourceModule,'d:\appl\borland\delphi22\source\fmx\FMX.Types.pas',0,1,3682,1,3684,0,0,{{4068,0}
+File_12=TSourceModule,'d:\appl\borland\delphi22\source\fmx\FMX.Objects.pas',0,1,1,86,18,0,0,,
+File_13=TSourceModule,'d:\appl\borland\delphi22\SOURCE\RTL\SYS\System.Types.pas',0,1,354,59,372,0,0,,
+File_14=TSourceModule,'d:\appl\borland\delphi22\source\rtl\common\System.IOUtils.pas',0,1,3605,18,3606,0,0,,
 
 [Modules]
-Module0=D:\projects\pascal\restourant\src\forms\Restourant.Forms.Main.pas
-Module1=D:\projects\pascal\restourant\src\const\Restourant.Consts.UserData.pas
-Module2=D:\projects\pascal\restourant\src\const\Restourant.Consts.Database.pas
+Module0=D:\projects\pascal\restourant\src\Rastipuzzo.dproj
+Module1=D:\projects\pascal\restourant\src\DaVinci.dproj
+Module2=D:\projects\pascal\restourant\src\forms\Restourant.Forms.Main.pas
 Module3=default.htm
-Module4=D:\projects\pascal\restourant\src\DaVinci.dproj
-Count=5
+Module4=D:\projects\pascal\restourant\src\const\Restourant.Consts.UserData.pas
+Module5=D:\projects\pascal\restourant\src\const\Restourant.Consts.Database.pas
+Count=6
 EditWindowCount=1
+
+[D:\projects\pascal\restourant\src\Rastipuzzo.dproj]
+ModuleType=TBaseProject
+
+[D:\projects\pascal\restourant\src\DaVinci.dproj]
+ModuleType=TBaseProject
 
 [D:\projects\pascal\restourant\src\forms\Restourant.Forms.Main.pas]
 ModuleType=TSourceModule
 FormState=0
 FormOnTop=0
+
+[default.htm]
+ModuleType=TURLModule
 
 [D:\projects\pascal\restourant\src\const\Restourant.Consts.UserData.pas]
 ModuleType=TSourceModule
@@ -39,20 +49,35 @@ ModuleType=TSourceModule
 FormState=0
 FormOnTop=0
 
-[default.htm]
-ModuleType=TURLModule
+[D:\projects\pascal\restourant\src\const\Restourant.Consts.Filenames.pas]
+FormState=0
+FormOnTop=0
 
-[D:\projects\pascal\restourant\src\DaVinci.dproj]
-ModuleType=TBaseProject
+[D:\projects\pascal\restourant\src\const\Restourant.Consts.Strings.pas]
+FormState=0
+FormOnTop=0
+
+[D:\projects\pascal\restourant\src\lib\Network.pas]
+FormState=0
+FormOnTop=0
+
+[D:\projects\pascal\restourant\src\lib\Restourant.JsonDatabase.pas]
+FormState=0
+FormOnTop=0
+
+[D:\projects\pascal\restourant\src\lib\Restourant.JsonDataObject.pas]
+FormState=0
+FormOnTop=0
 
 [EditWindow0]
-ViewCount=5
-CurrentEditView=D:\projects\pascal\restourant\src\forms\Restourant.Forms.Main.pas
+ViewCount=6
+CurrentEditView=D:\projects\pascal\restourant\src\Rastipuzzo.dpr
 View0=0
 View1=1
 View2=2
 View3=3
 View4=4
+View5=5
 PercentageSizes=1
 Create=1
 Visible=1
@@ -86,7 +111,7 @@ WelcomePageURL=bds:/default.htm
 CustomEditViewType=TEditView
 Module=D:\projects\pascal\restourant\src\DaVinci.dpr
 CursorX=1
-CursorY=1
+CursorY=20
 TopLine=1
 LeftCol=1
 Elisions=
@@ -125,6 +150,17 @@ LeftCol=1
 Elisions={{152,4},{158,38},{'Visual style methods'}}{{159,4},{162,40},{'Archives and rosources'}}{{177,4},{181,40},{'HTTP Download progress'}}{{211,4},{217,15},{'Internet'}}
 Bookmarks=
 EditViewName=D:\projects\pascal\restourant\src\forms\Restourant.Forms.Main.pas
+
+[View5]
+CustomEditViewType=TEditView
+Module=D:\projects\pascal\restourant\src\Rastipuzzo.dpr
+CursorX=37
+CursorY=15
+TopLine=1
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\projects\pascal\restourant\src\Rastipuzzo.dpr
 
 [Watches]
 Count=0
@@ -270,8 +306,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=221
-Top=416
+Left=-8
+Top=-26
 Width=5305
 Height=4883
 MaxLeft=-1
@@ -524,15 +560,15 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=246
-Top=650
+Left=0
+Top=0
 Width=3672
-Height=922
+Height=1234
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3672
-ClientHeight=922
-TBDockHeight=922
+ClientHeight=1234
+TBDockHeight=1234
 LRDockWidth=3672
 Dockable=1
 StayOnTop=0
@@ -551,8 +587,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=221
-Top=416
+Left=-8
+Top=-26
 Width=7148
 Height=4883
 MaxLeft=-1
@@ -767,7 +803,7 @@ Dockable=1
 StayOnTop=0
 TabPosition=1
 ActiveTabID=RefactoringForm
-TabDockClients=RefactoringForm,FindReferencsForm,CppChecks,MetricsView,QAView,FindRefsResults,FindDefsResults,HeaderDepResults,TypeHierarchyResults
+TabDockClients=RefactoringForm,FindReferencsForm,FindDefsResults,HeaderDepResults,TypeHierarchyResults,FindRefsResults,CppChecks,MetricsView,QAView
 
 [DockSite1]
 DockSiteType=1
@@ -790,8 +826,8 @@ Dockable=1
 StayOnTop=0
 TabPosition=1
 ActiveTabID=ProjectManager
-TabDockClients=ProjectManager,StructureView,frmDesignPreview,PropertyInspector,ModelViewTool,DataExplorerContainer
+TabDockClients=ProjectManager,StructureView,frmDesignPreview,PropertyInspector,DataExplorerContainer,ModelViewTool
 
 [ActiveProject]
-ActiveProject=1
+ActiveProject=2
 

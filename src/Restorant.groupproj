@@ -6,6 +6,9 @@
         <Projects Include="DaVinci.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Rastipuzzo.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -23,14 +26,23 @@
     <Target Name="DaVinci:Make">
         <MSBuild Projects="DaVinci.dproj" Targets="Make"/>
     </Target>
+    <Target Name="Rastipuzzo">
+        <MSBuild Projects="Rastipuzzo.dproj"/>
+    </Target>
+    <Target Name="Rastipuzzo:Clean">
+        <MSBuild Projects="Rastipuzzo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Rastipuzzo:Make">
+        <MSBuild Projects="Rastipuzzo.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DaVinci"/>
+        <CallTarget Targets="DaVinci;Rastipuzzo"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DaVinci:Clean"/>
+        <CallTarget Targets="DaVinci:Clean;Rastipuzzo:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DaVinci:Make"/>
+        <CallTarget Targets="DaVinci:Make;Rastipuzzo:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
